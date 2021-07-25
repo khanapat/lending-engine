@@ -1,0 +1,25 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "Template api with fiber framework.",
+        "title": "Template Fiber API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "K.apiwattanawong",
+            "url": "http://www.swagger.io/support",
+            "email": "k.apiwattanawong@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:9090",
+    "basePath": "/template-api",
+    "paths": {}
+}

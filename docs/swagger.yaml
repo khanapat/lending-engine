@@ -1,0 +1,19 @@
+basePath: /template-api
+host: localhost:9090
+info:
+  contact:
+    email: k.apiwattanawong@gmail.com
+    name: K.apiwattanawong
+    url: http://www.swagger.io/support
+  description: Template api with fiber framework.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Template Fiber API
+  version: "1.0"
+paths: {}
+schemes:
+- http
+- https
+swagger: "2.0"
