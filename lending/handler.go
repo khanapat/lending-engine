@@ -290,7 +290,9 @@ func (s *lendingHandler) GetCreditAvailable(c *handler.Ctx) error {
 	}
 	var totalOutstanding float64
 	for _, value := range *contracts {
-		totalOutstanding += *value.LoanOutstanding
+		if *value.Status != common.ClosedStatus {
+			totalOutstanding += *value.LoanOutstanding
+		}
 	}
 
 	getCreditAvailableResponse := GetCreditAvailableResponse{
@@ -303,23 +305,17 @@ func (s *lendingHandler) GetCreditAvailable(c *handler.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetCreditAvailableSuccess, &getCreditAvailableResponse))
 }
 
-func (s *lendingHandler) GetLoanAdmin(c *handler.Ctx) error {
-	var req GetLoanAdminRequest
-	if err := c.QueryParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).GetContractAdminRequest, err.Error()))
-	}
-	m := make(map[string]interface{})
-	if req.ContractID != nil {
-		m["contract_id"] = req.ContractID
-	}
-	if req.AccountID != nil {
-		m["account_id"] = req.AccountID
-	}
-	lists, err := s.LendingRepository.QueryContractRepo(c.Context(), m)
+func (s *lendingHandler) GetLoan(c *handler.Ctx) error {
+	bearer := c.Locals(common.JWTClaimsKey).(*jwt.Token)
+	claims := bearer.Claims.(jwt.MapClaims)
+	id := claims["accountId"].(float64)
+	accountId := int(id)
+
+	lists, err := s.LendingRepository.QueryContractByAccountIDRepo(c.Context(), accountId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
-	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetContractAdminSuccess, &lists))
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetLoanSuccess, &lists))
 }
 
 func (s *lendingHandler) BorrowLoan(c *handler.Ctx) error {
@@ -344,6 +340,25 @@ func (s *lendingHandler) BorrowLoan(c *handler.Ctx) error {
 		ContractID: int(contractId),
 	}
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).BorrowLoanSuccess, &borrowLoanResponse))
+}
+
+func (s *lendingHandler) GetLoanAdmin(c *handler.Ctx) error {
+	var req GetLoanAdminRequest
+	if err := c.QueryParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).GetContractAdminRequest, err.Error()))
+	}
+	m := make(map[string]interface{})
+	if req.ContractID != nil {
+		m["contract_id"] = req.ContractID
+	}
+	if req.AccountID != nil {
+		m["account_id"] = req.AccountID
+	}
+	lists, err := s.LendingRepository.QueryContractRepo(c.Context(), m)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetContractAdminSuccess, &lists))
 }
 
 func (s *lendingHandler) ConfirmLoanAdmin(c *handler.Ctx) error {

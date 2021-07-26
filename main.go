@@ -140,6 +140,7 @@ func main() {
 	baseApi.Post("/deposit", handler.Helper(lendingHandler.SubmitDeposit, logger))
 
 	baseApi.Get("/credit", handler.Helper(lendingHandler.GetCreditAvailable, logger))
+	baseApi.Get("/contract", handler.Helper(lendingHandler.GetLoan, logger))
 	baseApi.Post("/borrow", handler.Helper(lendingHandler.BorrowLoan, logger))
 
 	app.Get("/version", version.VersionHandler)
