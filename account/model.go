@@ -55,6 +55,33 @@ func (req *SignUpRequest) validate() error {
 	return nil
 }
 
+type GetAccountAdminRequest struct {
+	AccountID *int    `json:"accountId" example:"1"`
+	Email     *string `json:"email" example:"k.apiwattanawong@gmail.com"`
+}
+
+type GetAccountAdminResponse struct {
+	AccountID     int        `json:"accountId" example:"1"`
+	FirstName     string     `json:"firstName" example:"Khanapat"`
+	LastName      string     `json:"lastName" example:"Apiwattanawong"`
+	Phone         string     `json:"phone" example:"0811111111"`
+	Email         string     `json:"email" example:"k.apiwattanawong@gmail.com"`
+	Password      string     `json:"password" example:"<bcrypt>"`
+	AccountNumber string     `json:"accountNumber" example:"11111111"`
+	IsVerify      bool       `json:"isVerify" example:"1"`
+	Status        string     `json:"status" example:"PENDING"`
+	TermCondition string     `json:"termCondition" example:"1.0.0"`
+	Document      []Document `json:"document"`
+}
+
+type Document struct {
+	DocumentID   int    `json:"documentId" example:"1"`
+	DocumentType string `json:"documentType" example:"CITIZEN ID"`
+	FileName     string `json:"fileName" example:"cid.pdf"`
+	FileContext  string `json:"fileContext" example:"<Base64>"`
+	Tag          string `json:"tag" example:"id"`
+}
+
 type LoginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`

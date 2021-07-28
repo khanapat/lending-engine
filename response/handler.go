@@ -41,6 +41,10 @@ var (
 		GetRepaymentRequest:            ErrResponse{Code: ErrInvalidRequestCode, Title: ErrGetRepaymentMessageEN, Description: ErrRequestDataDescEN},
 		SubmitRepaymentSuccess:         Response{Code: SuccessCode, Title: SuccessSubmitRepaymentMessageEN},
 		SubmitRepaymentRequest:         ErrResponse{Code: ErrInvalidRequestCode, Title: ErrSubmitRepaymentMessageEN, Description: ErrRequestDataDescEN},
+		GetAccountAdminSuccess:         Response{Code: SuccessCode, Title: SuccessGetAccountAdminMessageEN},
+		GetAccountAdminRequest:         ErrResponse{Code: ErrInvalidRequestCode, Title: ErrGetAccountAdminMessageEN, Description: ErrRequestDataDescEN},
+		ConfirmAccountAdminSuccess:     Response{Code: SuccessCode, Title: SuccessConfirmAccountAdminMessageEN},
+		ConfirmAccountAdminRequest:     ErrResponse{Code: ErrInvalidRequestCode, Title: ErrConfirmAccountAdminMessageEN, Description: ErrRequestDataDescEN},
 		GetDepositAdminSuccess:         Response{Code: SuccessCode, Title: SuccessGetDepositAdminMessageEN},
 		GetDepositAdminRequest:         ErrResponse{Code: ErrInvalidRequestCode, Title: ErrGetDepositAdminMessageEN, Description: ErrRequestDataDescEN},
 		ConfirmDepositAdminSuccess:     Response{Code: SuccessCode, Title: SuccessConfirmDepositAdminMessageEN},
@@ -99,6 +103,10 @@ var (
 		GetRepaymentRequest:            ErrResponse{Code: ErrInvalidRequestCode, Title: ErrGetRepaymentMessageTH, Description: ErrRequestDataDescTH},
 		SubmitRepaymentSuccess:         Response{Code: SuccessCode, Title: SuccessSubmitRepaymentMessageTH},
 		SubmitRepaymentRequest:         ErrResponse{Code: ErrInvalidRequestCode, Title: ErrSubmitRepaymentMessageTH, Description: ErrRequestDataDescTH},
+		GetAccountAdminSuccess:         Response{Code: SuccessCode, Title: SuccessGetAccountAdminMessageTH},
+		GetAccountAdminRequest:         ErrResponse{Code: ErrInvalidRequestCode, Title: ErrGetAccountAdminMessageTH, Description: ErrRequestDataDescTH},
+		ConfirmAccountAdminSuccess:     Response{Code: SuccessCode, Title: SuccessConfirmAccountAdminMessageTH},
+		ConfirmAccountAdminRequest:     ErrResponse{Code: ErrInvalidRequestCode, Title: ErrConfirmAccountAdminMessageTH, Description: ErrRequestDataDescTH},
 		GetDepositAdminSuccess:         Response{Code: SuccessCode, Title: SuccessGetDepositAdminMessageTH},
 		GetDepositAdminRequest:         ErrResponse{Code: ErrInvalidRequestCode, Title: ErrGetDepositAdminMessageTH, Description: ErrRequestDataDescTH},
 		ConfirmDepositAdminSuccess:     Response{Code: SuccessCode, Title: SuccessConfirmDepositAdminMessageTH},
@@ -168,6 +176,10 @@ type Global struct {
 	SubmitRepaymentSuccess    Response
 	SubmitRepaymentRequest    ErrResponse
 	//// Admin
+	GetAccountAdminSuccess       Response
+	GetAccountAdminRequest       ErrResponse
+	ConfirmAccountAdminSuccess   Response
+	ConfirmAccountAdminRequest   ErrResponse
 	GetDepositAdminSuccess       Response
 	GetDepositAdminRequest       ErrResponse
 	ConfirmDepositAdminSuccess   Response

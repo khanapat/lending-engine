@@ -3,6 +3,7 @@ package account
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -83,6 +84,99 @@ func (r accountRepositoryDB) SignUpAccountRepo(ctx context.Context, firstName st
 	}
 	return accountId, nil
 }
+
+func (r accountRepositoryDB) GetAccountByEmailRepo(ctx context.Context, email string) (*Account, error) {
+	var account Account
+	err := r.db.GetContext(ctx, &account, `
+		SELECT account_id, first_name, last_name, phone, email, "password", account_number, is_verify, status
+		FROM lending.public.account
+		WHERE email = $1
+	;`, email)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, nil
+	case err != nil:
+		return nil, err
+	default:
+		return &account, nil
+	}
+}
+
+func (r accountRepositoryDB) GetAccountByIDRepo(ctx context.Context, accountId int) (*Account, error) {
+	var account Account
+	err := r.db.GetContext(ctx, &account, `
+		SELECT account_id, first_name, last_name, phone, email, "password", account_number, is_verify, status
+		FROM lending.public.account
+		WHERE account_id = $1
+	;`, accountId)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, nil
+	case err != nil:
+		return nil, err
+	default:
+		return &account, nil
+	}
+}
+
+func (r accountRepositoryDB) GetAccountRepo(ctx context.Context, request map[string]interface{}) (*[]AccountDetail, error) {
+	details := make([]AccountDetail, 0)
+	query := `
+		SELECT	x.account_id,
+				x.first_name,
+				x.last_name,
+				x.phone,
+				x.email,
+				x."password",
+				x.account_number,
+				x.is_verify,
+				x.status,
+				y.current_accept_version,
+				z.document_id,
+				i.document_type,
+				z.file_context,
+				z.file_name,
+				z.tag 
+		FROM lending.public.account x 
+		INNER JOIN lending.public.terms_condition y ON x.account_id = y.account_id
+		INNER JOIN lending.public.account_document z ON x.account_id = z.account_id
+		INNER JOIN lending.public.document_info i ON z.document_id = i.document_id
+		WHERE 1 = 1
+	`
+	for key, _ := range request {
+		query = fmt.Sprintf("%s AND %s = :%s", query, key, key)
+	}
+	rows, err := r.db.NamedQueryContext(ctx, query, request)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var detail AccountDetail
+		if err := rows.StructScan(&detail); err != nil {
+			return nil, err
+		}
+		details = append(details, detail)
+	}
+	defer rows.Close()
+	return &details, nil
+}
+
+func (r accountRepositoryDB) UpdateAccountRepo(ctx context.Context, accountId int, status string) (int64, error) {
+	result, err := r.db.ExecContext(ctx, `
+		UPDATE lending.public.account
+		SET		status = $1
+		WHERE account_id = $2
+	;`, status, accountId)
+	if err != nil {
+		return 0, err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rows, nil
+}
+
 func (r accountRepositoryDB) CreateWalletRepo(ctx context.Context, accountId int) error {
 	_, err := r.db.ExecContext(ctx, `
 		INSERT INTO lending.public.wallet
@@ -151,23 +245,6 @@ func (r accountRepositoryDB) AcceptTermsConditionRepo(ctx context.Context, accou
 		return 0, err
 	}
 	return affect, nil
-}
-
-func (r accountRepositoryDB) GetAccountByEmailRepo(ctx context.Context, email string) (*Account, error) {
-	var account Account
-	err := r.db.GetContext(ctx, &account, `
-		SELECT account_id, first_name, last_name, phone, email, "password", account_number, is_verify, status
-		FROM lending.public.account
-		WHERE email = $1
-	;`, email)
-	switch {
-	case err == sql.ErrNoRows:
-		return nil, nil
-	case err != nil:
-		return nil, err
-	default:
-		return &account, nil
-	}
 }
 
 func (r accountRepositoryDB) ConfirmChangePasswordRepo(ctx context.Context, accountId int, password string) (int64, error) {

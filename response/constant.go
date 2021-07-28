@@ -52,6 +52,10 @@ const (
 	SuccessSubmitRepaymentMessageEN    string = "Success submit repayment."
 	ErrSubmitRepaymentMessageEN        string = "Cannot submit repayment."
 	//// Admin
+	SuccessGetAccountAdminMessageEN       string = "Success get account detail."
+	ErrGetAccountAdminMessageEN           string = "Cannot get account detail."
+	SuccessConfirmAccountAdminMessageEN   string = "Success confirm account detail."
+	ErrConfirmAccountAdminMessageEN       string = "Cannot confirm account detail."
 	SuccessGetDepositAdminMessageEN       string = "Success get deposit token."
 	ErrGetDepositAdminMessageEN           string = "Cannot get deposit token."
 	SuccessConfirmDepositAdminMessageEN   string = "Success confirm deposit token."
@@ -122,6 +126,10 @@ const (
 	SuccessSubmitRepaymentMessageTH    string = "ส่งหลักฐานยืนยันการจ่ายเงินคืนสำเร็จ."
 	ErrSubmitRepaymentMessageTH        string = "ไม่สามารถส่งหลักฐานยืนยันการจ่ายเงินคืนได้."
 	//// Admin
+	SuccessGetAccountAdminMessageTH       string = "แสดงข้อมูลบัญชีผู้ใช้งานสำเร็จ."
+	ErrGetAccountAdminMessageTH           string = "ไม่สามารถแสดงข้อมูลบัญชีผู้ใช้งานได้."
+	SuccessConfirmAccountAdminMessageTH   string = "ยืนยันข้อมูลบัญชีผู้ใช้งานสำเร็จ."
+	ErrConfirmAccountAdminMessageTH       string = "ไม่สามารถยืนยันข้อมูลบัญชีผู้ใช้งานได้."
 	SuccessGetDepositAdminMessageTH       string = "แสดงรายการฝากโทเคนสำเร็จ."
 	ErrGetDepositAdminMessageTH           string = "ไม่สามารถแสดงรายการฝากโทเคนได้."
 	SuccessConfirmDepositAdminMessageTH   string = "ยืนยันการฝากโทเคนสำเร็จ."

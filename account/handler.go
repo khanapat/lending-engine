@@ -117,6 +117,78 @@ func (s *accountHandler) ConfirmVerifyEmail(c *handler.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).ConfirmVerifyEmailSuccess, nil))
 }
 
+func (s *accountHandler) GetAccountAdmin(c *handler.Ctx) error {
+	var req GetAccountAdminRequest
+	if err := c.QueryParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).GetAccountAdminRequest, err.Error()))
+	}
+	m := make(map[string]interface{})
+	if req.AccountID != nil {
+		m["x.account_id"] = req.AccountID
+	}
+	if req.Email != nil {
+		m["x.email"] = req.Email
+	}
+	lists, err := s.AccountRepository.GetAccountRepo(c.Context(), m)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+
+	var documents []Document
+	for _, value := range *lists {
+		document := Document{
+			DocumentID:   *value.DocumentID,
+			DocumentType: *value.DocumentType,
+			FileName:     *value.FileName,
+			FileContext:  *value.FileContext,
+			Tag:          *value.Tag,
+		}
+		documents = append(documents, document)
+	}
+
+	getAccountAdminResponse := GetAccountAdminResponse{
+		AccountID:     *(*lists)[0].AccountID,
+		FirstName:     *(*lists)[0].FirstName,
+		LastName:      *(*lists)[0].LastName,
+		Phone:         *(*lists)[0].Phone,
+		Password:      *(*lists)[0].Password,
+		AccountNumber: *(*lists)[0].AccountNumber,
+		IsVerify:      *(*lists)[0].IsVerify,
+		Status:        *(*lists)[0].Status,
+		TermCondition: *(*lists)[0].CurrentAcceptVersion,
+		Document:      documents,
+	}
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetAccountAdminSuccess, &getAccountAdminResponse))
+}
+
+func (s *accountHandler) ConfirmAccountAdmin(c *handler.Ctx) error {
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmAccountAdminRequest, err.Error()))
+	}
+
+	account, err := s.AccountRepository.GetAccountByIDRepo(c.Context(), id)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if account == nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmAccountAdminRequest, "ID doesn't exist."))
+	}
+	if *account.Status != common.PendingStatus {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, "This id has already confirmed."))
+	}
+
+	accountRows, err := s.AccountRepository.UpdateAccountRepo(c.Context(), id, common.ConfirmStatus)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if accountRows != 1 {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, fmt.Sprintf("expected to affect 1 row, affected %d", accountRows)))
+	}
+	c.Log().Info(fmt.Sprintf("AccountID: %d | Status: %s", id, *account.Status))
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).ConfirmAccountAdminSuccess, nil))
+}
+
 func (s *accountHandler) GetTermsCondition(c *handler.Ctx) error {
 	bearer := c.Locals(common.JWTClaimsKey).(*jwt.Token)
 	claims := bearer.Claims.(jwt.MapClaims)

@@ -148,6 +148,9 @@ func main() {
 
 	baseApi.Get("/interest", handler.Helper(lendingHandler.GetInterestTerm, logger))
 
+	baseApi.Get("/admin/account", handler.Helper(accountHandler.GetAccountAdmin, logger))
+	baseApi.Get("/admin/account/:id", handler.Helper(accountHandler.ConfirmAccountAdmin, logger))
+
 	baseApi.Get("/admin/deposit", handler.Helper(lendingHandler.GetDepositAdmin, logger))
 	baseApi.Get("/admin/deposit/:id", handler.Helper(lendingHandler.ConfirmDepositAdmin, logger))
 
