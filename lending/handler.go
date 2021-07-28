@@ -103,7 +103,7 @@ func (s *lendingHandler) GetDepositStatus(c *handler.Ctx) error {
 	claims := bearer.Claims.(jwt.MapClaims)
 	id := claims["accountId"].(float64)
 
-	deposits, err := s.LendingRepository.QueryDepositByAccountIDRepo(c.Context(), int(id))
+	deposits, err := s.LendingRepository.QueryDepositRepo(c.Context(), map[string]interface{}{"account_id": id})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
@@ -144,7 +144,8 @@ func (s *lendingHandler) SubmitDeposit(c *handler.Ctx) error {
 
 	c.Log().Info(fmt.Sprintf("Deposit Status: %s", status))
 
-	if err := s.LendingRepository.InsertDepositRepo(c.Context(), accountId, req.Address, req.ChainID, req.TxnHash, req.CollateralType, req.Volume, status); err != nil {
+	depositId, err := s.LendingRepository.InsertDepositRepo(c.Context(), accountId, req.Address, req.ChainID, req.TxnHash, req.CollateralType, req.Volume, status)
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
 
@@ -176,7 +177,10 @@ func (s *lendingHandler) SubmitDeposit(c *handler.Ctx) error {
 		}
 		c.Log().Info(fmt.Sprintf("AccountID: %d | BTC: %f | ETH: %f", accountId, btc, eth))
 	}
-	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).SubmitDepositSuccess, nil))
+	submitDepositResponse := SubmitDepositResponse{
+		DepositID: depositId,
+	}
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).SubmitDepositSuccess, &submitDepositResponse))
 }
 
 func (s *lendingHandler) GetDepositAdmin(c *handler.Ctx) error {
@@ -284,7 +288,7 @@ func (s *lendingHandler) GetCreditAvailable(c *handler.Ctx) error {
 
 	totalCollateralValue := btcLoan + ethLoan
 
-	contracts, err := s.LendingRepository.QueryContractByAccountIDRepo(c.Context(), accountId)
+	contracts, err := s.LendingRepository.QueryContractRepo(c.Context(), map[string]interface{}{"account_id": accountId})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
@@ -309,9 +313,8 @@ func (s *lendingHandler) GetLoan(c *handler.Ctx) error {
 	bearer := c.Locals(common.JWTClaimsKey).(*jwt.Token)
 	claims := bearer.Claims.(jwt.MapClaims)
 	id := claims["accountId"].(float64)
-	accountId := int(id)
 
-	lists, err := s.LendingRepository.QueryContractByAccountIDRepo(c.Context(), accountId)
+	lists, err := s.LendingRepository.QueryContractRepo(c.Context(), map[string]interface{}{"account_id": id})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
@@ -337,7 +340,7 @@ func (s *lendingHandler) BorrowLoan(c *handler.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
 	borrowLoanResponse := BorrowLoanResponse{
-		ContractID: int(contractId),
+		ContractID: contractId,
 	}
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).BorrowLoanSuccess, &borrowLoanResponse))
 }
@@ -385,6 +388,7 @@ func (s *lendingHandler) ConfirmLoanAdmin(c *handler.Ctx) error {
 	if contractRows != 1 {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, fmt.Sprintf("expected to affect 1 row, affected %d", contractRows)))
 	}
+	c.Log().Info(fmt.Sprintf("ContractID: %d | Status: %s", id, *contract.Status))
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).ConfirmContractAdminSuccess, nil))
 }
 
@@ -394,4 +398,105 @@ func (s *lendingHandler) GetInterestTerm(c *handler.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetInterestTermSuccess, &interestTerm))
+}
+
+func (s *lendingHandler) GetRepay(c *handler.Ctx) error {
+	bearer := c.Locals(common.JWTClaimsKey).(*jwt.Token)
+	claims := bearer.Claims.(jwt.MapClaims)
+	id := claims["accountId"].(float64)
+
+	lists, err := s.LendingRepository.QueryRepayTransactionRepo(c.Context(), map[string]interface{}{"account_id": id})
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetRepaymentSuccess, &lists))
+}
+
+func (s *lendingHandler) SubmitRepay(c *handler.Ctx) error {
+	bearer := c.Locals(common.JWTClaimsKey).(*jwt.Token)
+	claims := bearer.Claims.(jwt.MapClaims)
+	id := claims["accountId"].(float64)
+
+	var req SubmitRepayRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).SubmitRepaymentRequest, err.Error()))
+	}
+	if err := req.validate(); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).SubmitRepaymentRequest, err.Error()))
+	}
+
+	contract, err := s.LendingRepository.QueryContractByIDRepo(c.Context(), req.ContractID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if contract == nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).SubmitRepaymentRequest, "ContractID doesn't exist."))
+	}
+
+	repayId, err := s.LendingRepository.InsertRepayTransactionRepo(c.Context(), req.ContractID, int(id), float64(req.Amount), req.Slip)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	submitRepayResponse := SubmitRepayResponse{
+		RepayID: repayId,
+	}
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).SubmitRepaymentSuccess, &submitRepayResponse))
+}
+
+func (s *lendingHandler) GetRepayAdmin(c *handler.Ctx) error {
+	var req GetRepayAdminRequest
+	if err := c.QueryParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).GetRepaymentAdminRequest, err.Error()))
+	}
+	m := make(map[string]interface{})
+	if req.ID != nil {
+		m["id"] = req.ID
+	}
+	if req.ContractID != nil {
+		m["contract_id"] = req.ContractID
+	}
+	if req.AccountID != nil {
+		m["account_id"] = req.AccountID
+	}
+	lists, err := s.LendingRepository.QueryRepayTransactionRepo(c.Context(), m)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetRepaymentAdminSuccess, &lists))
+}
+
+func (s *lendingHandler) ConfirmRepayAdmin(c *handler.Ctx) error {
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmRepaymentAdminRequest, err.Error()))
+	}
+
+	repay, err := s.LendingRepository.QueryRepayTransactionByIDRepo(c.Context(), id)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if repay == nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmRepaymentAdminRequest, "ID doesn't exist."))
+	}
+	if *repay.Status != common.PendingStatus {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, "This id has already confirmed."))
+	}
+
+	repayRows, err := s.LendingRepository.UpdateRepayTransactionRepo(c.Context(), id, common.ConfirmStatus, time.Now().Format(common.DateYYYYMMDDHHMMSSFormat))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if repayRows != 1 {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, fmt.Sprintf("expected to affect 1 row, affected %d", repayRows)))
+	}
+
+	contractRows, err := s.LendingRepository.UpdateContractRepo(c.Context(), *repay.ContractID, common.ClosedStatus, time.Now().Format(common.DateYYYYMMDDHHMMSSFormat))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if contractRows != 1 {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, fmt.Sprintf("expected to affect 1 row, affected %d", contractRows)))
+	}
+	c.Log().Info(fmt.Sprintf("RepayID: %d - Status: %s | ContractID: %d Status: %s", id, common.ConfirmStatus, *repay.ContractID, common.ClosedStatus))
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).ConfirmRepaymentAdminSuccess, nil))
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// deposit
 type SubmitDepositRequest struct {
 	Address        string  `json:"address" example:"0xc083EB69aa7215f4AFa7a22dcbfCC1a33999371C"`
 	ChainID        int     `json:"chainId" example:"1"`
@@ -35,12 +36,17 @@ func (req *SubmitDepositRequest) validate() error {
 	return nil
 }
 
+type SubmitDepositResponse struct {
+	DepositID int64 `json:"depositId" example:"1"`
+}
+
 type GetDepositAdminRequest struct {
 	ID        *int    `json:"id" example:"1"`
 	AccountID *int    `json:"accountId" example:"4"`
 	Address   *string `json:"address" example:"0xc083EB69aa7215f4AFa7a22dcbfCC1a33999371C"`
 }
 
+// credit
 type GetCreditAvailableResponse struct {
 	BTCVolume       float64 `json:"btcVolume" example:"0.1"`
 	ETHVolume       float64 `json:"ethVolume" example:"0.1"`
@@ -49,11 +55,7 @@ type GetCreditAvailableResponse struct {
 	CreditAvailable float64 `json:"creditAvailable" example:"10000"`
 }
 
-type GetLoanAdminRequest struct {
-	ContractID *int `json:"contractId" example:"1"`
-	AccountID  *int `json:"accountId" example:"1"`
-}
-
+// Borrow
 type BorrowLoanRequest struct {
 	Loan         float64 `json:"loan" example:"1000"`
 	InterestCode int     `json:"interestCode" example:"1"`
@@ -74,9 +76,45 @@ func (req *BorrowLoanRequest) validate() error {
 }
 
 type BorrowLoanResponse struct {
-	ContractID int `json:"contractId" example:"1"`
+	ContractID int64 `json:"contractId" example:"1"`
 }
 
+type GetLoanAdminRequest struct {
+	ContractID *int `json:"contractId" example:"1"`
+	AccountID  *int `json:"accountId" example:"1"`
+}
+
+// Repay
+type SubmitRepayRequest struct {
+	ContractID int    `json:"contractId" example:"1"`
+	Amount     int    `json:"amount" example:"1000"`
+	Slip       string `json:"slip" example:"<Base64>"`
+}
+
+func (req *SubmitRepayRequest) validate() error {
+	if req.ContractID == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'contractId' must be REQUIRED field but the input is '%v'.", req.ContractID)), response.ValidateFieldError)
+	}
+	if req.Amount == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'amount' must be REQUIRED field but the input is '%v'.", req.Amount)), response.ValidateFieldError)
+	}
+	if utf8.RuneCountInString(req.Slip) == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'slip' must be REQUIRED field but the input is '%v'.", req.Slip)), response.ValidateFieldError)
+	}
+	return nil
+}
+
+type SubmitRepayResponse struct {
+	RepayID int64 `json:"repayId" example:"1"`
+}
+
+type GetRepayAdminRequest struct {
+	ID         *int `json:"id" example:"1"`
+	ContractID *int `json:"contractId" example:"1"`
+	AccountID  *int `json:"accountId" example:"1"`
+}
+
+// Price
 type GetTokenPriceResponse struct {
 	BTC          TokenPrice `json:"btc"`
 	ETH          TokenPrice `json:"eth"`

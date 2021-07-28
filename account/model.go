@@ -92,3 +92,36 @@ type SendVerifyEmailClientResult struct {
 	Title       string `json:"title" example:"Success."`
 	Description string `json:"description" example:"Please contact administrator for more information."`
 }
+
+type RequestResetPasswordRequest struct {
+	Email string `json:"email" example:"k.apiwattanawong@gmail.com"`
+}
+
+func (req *RequestResetPasswordRequest) validate() error {
+	if utf8.RuneCountInString(req.Email) == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'email' must be REQUIRED field but the input is '%v'.", req.Email)), response.ValidateFieldError)
+	}
+	return nil
+}
+
+type ResetPasswordData struct {
+	Otp       string `json:"otp" example:"999999"`
+	FailCount int    `json:"failCount" example:"1"`
+	AccountID int    `json:"accountId" example:"1"`
+}
+
+type RequestResetPasswordResponse struct {
+	ReferenceNo string `json:"referenceNo" example:"XXXXXX"`
+	ExpiredTime string `json:"expiredTime" example:"2021-01-02 12:13:14"`
+}
+
+type ResetPasswordRequest struct {
+	NewPassword string `json:"newPassword" example:"BOBO"`
+}
+
+func (req *ResetPasswordRequest) validate() error {
+	if utf8.RuneCountInString(req.NewPassword) == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'newPassword' must be REQUIRED field but the input is '%v'.", req.NewPassword)), response.ValidateFieldError)
+	}
+	return nil
+}

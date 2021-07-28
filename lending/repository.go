@@ -18,23 +18,6 @@ func NewLendingRepositoryDB(db *sqlx.DB) lendingRepositoryDB {
 	}
 }
 
-func (r lendingRepositoryDB) QueryDepositByAccountIDRepo(ctx context.Context, accountId int) (*[]ConfirmedDeposit, error) {
-	var deposits []ConfirmedDeposit
-	err := r.db.SelectContext(ctx, &deposits, `
-		SELECT id, account_id, address, chain_id, txn_hash, collateral_type, volume, status, created_datetime, updated_datetime
-		FROM lending.public.confirmed_deposit
-		WHERE account_id = $1
-	;`, accountId)
-	switch {
-	case err == sql.ErrNoRows:
-		return nil, nil
-	case err != nil:
-		return nil, err
-	default:
-		return &deposits, nil
-	}
-}
-
 func (r lendingRepositoryDB) QueryDepositByIDRepo(ctx context.Context, id int) (*ConfirmedDeposit, error) {
 	var deposit ConfirmedDeposit
 	err := r.db.GetContext(ctx, &deposit, `
@@ -86,8 +69,9 @@ func (r lendingRepositoryDB) QueryDepositRepo(ctx context.Context, request map[s
 	return &deposits, nil
 }
 
-func (r lendingRepositoryDB) InsertDepositRepo(ctx context.Context, accountId int, address string, chainId int, txnHash string, collateralType string, volume float64, status string) error {
-	_, err := r.db.ExecContext(ctx, `
+func (r lendingRepositoryDB) InsertDepositRepo(ctx context.Context, accountId int, address string, chainId int, txnHash string, collateralType string, volume float64, status string) (int64, error) {
+	var depositId int64
+	if err := r.db.QueryRowContext(ctx, `
 		INSERT INTO lending.public.confirmed_deposit
 		(
 			account_id,
@@ -108,11 +92,11 @@ func (r lendingRepositoryDB) InsertDepositRepo(ctx context.Context, accountId in
 			$6,
 			$7
 		)
-	;`, accountId, address, chainId, txnHash, collateralType, volume, status)
-	if err != nil {
-		return err
+		RETURNING id
+	;`, accountId, address, chainId, txnHash, collateralType, volume, status).Scan(&depositId); err != nil {
+		return 0, err
 	}
-	return nil
+	return depositId, nil
 }
 
 func (r lendingRepositoryDB) UpdateDepositRepo(ctx context.Context, id int, status string, timestamp string) (int64, error) {
@@ -166,23 +150,6 @@ func (r lendingRepositoryDB) UpdateWalletRepo(ctx context.Context, accountId int
 		return 0, err
 	}
 	return rows, nil
-}
-
-func (r lendingRepositoryDB) QueryContractByAccountIDRepo(ctx context.Context, accountId int) (*[]Contract, error) {
-	var contracts []Contract
-	err := r.db.SelectContext(ctx, &contracts, `
-		SELECT contract_id, account_id, interest_code, loan_outstanding, term, status, created_datetime, updated_datetime
-		FROM lending.public.contract
-		WHERE account_id = $1
-	;`, accountId)
-	switch {
-	case err == sql.ErrNoRows:
-		return &contracts, nil
-	case err != nil:
-		return nil, err
-	default:
-		return &contracts, nil
-	}
 }
 
 func (r lendingRepositoryDB) QueryContractByIDRepo(ctx context.Context, id int) (*Contract, error) {
@@ -282,4 +249,87 @@ func (r lendingRepositoryDB) QueryInterestTermRepo(ctx context.Context) (*[]Inte
 	default:
 		return &interestTerms, nil
 	}
+}
+
+func (r lendingRepositoryDB) QueryRepayTransactionByIDRepo(ctx context.Context, id int) (*RepayTransaction, error) {
+	var repay RepayTransaction
+	err := r.db.GetContext(ctx, &repay, `
+		SELECT id, contract_id, account_id, amount, slip, status, created_datetime, updated_datetime
+		FROM lending.public.repay_transaction
+		WHERE id = $1
+	;`, id)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, nil
+	case err != nil:
+		return nil, err
+	default:
+		return &repay, nil
+	}
+}
+
+func (r lendingRepositoryDB) QueryRepayTransactionRepo(ctx context.Context, request map[string]interface{}) (*[]RepayTransaction, error) {
+	repays := make([]RepayTransaction, 0)
+	query := `
+		SELECT id, contract_id, account_id, amount, slip, status, created_datetime, updated_datetime
+		FROM lending.public.repay_transaction
+		WHERE 1 = 1
+	`
+	for key, _ := range request {
+		query = fmt.Sprintf("%s AND %s = :%s", query, key, key)
+	}
+	rows, err := r.db.NamedQueryContext(ctx, query, request)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var repay RepayTransaction
+		if err := rows.StructScan(&repay); err != nil {
+			return nil, err
+		}
+		repays = append(repays, repay)
+	}
+	defer rows.Close()
+	return &repays, nil
+}
+
+func (r lendingRepositoryDB) InsertRepayTransactionRepo(ctx context.Context, contractId int, accountId int, amount float64, slip string) (int64, error) {
+	var repaymentId int64
+	if err := r.db.QueryRowContext(ctx, `
+		INSERT INTO lending.public.repay_transaction
+		(
+			contract_id,
+			account_id,
+			amount,
+			slip
+		)
+		VALUES
+		(
+			$1,
+			$2,
+			$3,
+			$4
+		)
+		RETURNING id
+	;`, contractId, accountId, amount, slip).Scan(&repaymentId); err != nil {
+		return 0, err
+	}
+	return repaymentId, nil
+}
+
+func (r lendingRepositoryDB) UpdateRepayTransactionRepo(ctx context.Context, repayId int, status string, timestamp string) (int64, error) {
+	result, err := r.db.ExecContext(ctx, `
+		UPDATE lending.public.repay_transaction
+		SET status = $1,
+			updated_datetime = $2
+		WHERE id = $3
+	;`, status, timestamp, repayId)
+	if err != nil {
+		return 0, err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rows, nil
 }

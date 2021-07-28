@@ -10,6 +10,7 @@ import (
 	"lending-engine/internal/redis"
 	"lending-engine/lending"
 	"lending-engine/logz"
+	"lending-engine/mail"
 	"lending-engine/middleware"
 	"lending-engine/version"
 	"log"
@@ -91,7 +92,13 @@ func main() {
 		logger.Error(err.Error())
 	}
 
-	middle := middleware.NewMiddleware(logger)
+	middle := middleware.NewMiddleware(
+		logger,
+		redis.NewCheckExpireDataRedisFn(pool),
+		redis.NewGetStructDataRedisFn(pool),
+		redis.NewSetStructWExpireRedisFn(pool),
+		redis.NewDeleteDataRedisFn(pool),
+	)
 
 	swag := app.Group("/swagger")
 	swag.Use(middle.BasicAuthenicationMiddleware())
@@ -107,7 +114,12 @@ func main() {
 		account.NewAccountRepositoryDB(postgresDB),
 		account.NewRequestVerifyEmailClientFn(httpClient),
 		redis.NewSetDataNoExpireRedisFn(pool),
+		redis.NewCheckExpireDataRedisFn(pool),
 		redis.NewGetDeleteIntDataRedisFn(pool),
+		redis.NewSetStructWExpireRedisFn(pool),
+		redis.NewGetStructDataRedisFn(pool),
+		redis.NewDeleteDataRedisFn(pool),
+		mail.NewRequestMailOtpClientFn(httpClient),
 	)
 
 	lendingHandler := lending.NewLendingHandler(
@@ -116,12 +128,23 @@ func main() {
 		redis.NewGetFloatDataRedisFn(pool),
 	)
 
+	mailhandler := mail.NewMailHandler(
+		mail.NewQueryAccountByIDFn(postgresDB),
+		redis.NewCheckExpireDataRedisFn(pool),
+		redis.NewSetDataWExpireRedisFn(pool),
+		redis.NewGetIntDataRedisFn(pool),
+		redis.NewSetStructWExpireRedisFn(pool),
+		mail.NewRequestMailOtpClientFn(httpClient),
+	)
+
 	baseApi.Get("/price", handler.Helper(lendingHandler.GetTokenPrice, logger))
 	baseApi.Post("/price/calculation", handler.Helper(lendingHandler.PreCalculationLoan, logger))
 
 	baseApi.Post("/signup", handler.Helper(accountHandler.SignUp, logger))
 	baseApi.Post("/login", handler.Helper(accountHandler.Login, logger))
 	baseApi.Get("/verify/email/:ref", handler.Helper(accountHandler.ConfirmVerifyEmail, logger))
+	baseApi.Post("/reset", handler.Helper(accountHandler.RequestResetPassword, logger))
+	baseApi.Put("/reset", handler.Helper(accountHandler.ResetPassword, logger))
 
 	baseApi.Get("/interest", handler.Helper(lendingHandler.GetInterestTerm, logger))
 
@@ -130,6 +153,9 @@ func main() {
 
 	baseApi.Get("/admin/contract", handler.Helper(lendingHandler.GetLoanAdmin, logger))
 	baseApi.Get("/admin/contract/:id", handler.Helper(lendingHandler.ConfirmLoanAdmin, logger))
+
+	baseApi.Get("/admin/repay", handler.Helper(lendingHandler.GetRepayAdmin, logger))
+	baseApi.Get("/admin/repay/:id", handler.Helper(lendingHandler.ConfirmRepayAdmin, logger))
 
 	baseApi.Use(middle.AuthorizeTokenMiddleware())
 
@@ -141,6 +167,14 @@ func main() {
 
 	baseApi.Get("/credit", handler.Helper(lendingHandler.GetCreditAvailable, logger))
 	baseApi.Get("/contract", handler.Helper(lendingHandler.GetLoan, logger))
+
+	baseApi.Get("/repay", handler.Helper(lendingHandler.GetRepay, logger))
+	baseApi.Post("/repay", handler.Helper(lendingHandler.SubmitRepay, logger))
+
+	baseApi.Get("/otp", handler.Helper(mailhandler.Otp, logger))
+
+	baseApi.Use(middle.VerifyOTPMiddleware())
+
 	baseApi.Post("/borrow", handler.Helper(lendingHandler.BorrowLoan, logger))
 
 	app.Get("/version", version.VersionHandler)
@@ -204,13 +238,18 @@ func initViper() {
 	viper.SetDefault("redis.timeout", "60s")
 	viper.SetDefault("redis.host", "localhost:6379")
 	viper.SetDefault("redis.password", "P@ssw0rd")
+	viper.SetDefault("redis.expired-otp", 180)
+	viper.SetDefault("redis.limit-otp", 3)
+	viper.SetDefault("redis.limit-request", 5)
 
 	viper.SetDefault("client.timeout", "60s")
 	viper.SetDefault("client.hidebody", true)
-	viper.SetDefault("client.email-api.url", "http://localhost:8080/email/verify")
-	viper.SetDefault("client.email-api.link", "http://www.icfin.finance.com/verify-email/{ref}")
+	viper.SetDefault("client.email-api.verification.url", "http://localhost:8080/email/verification")
+	viper.SetDefault("client.email-api.verification.link", "http://www.icfin.finance.com/verify-email/{ref}")
+	viper.SetDefault("client.email-api.otp.url", "http://localhost:8080/email/otp")
 	viper.SetDefault("client.email-api.account", "yoisak09446@gmail.com")
 	viper.SetDefault("client.email-api.verify-emil-template", "verify-email.html")
+	viper.SetDefault("client.email-api.otp-template", "otp.html")
 
 	viper.SetDefault("jwt.issuer", "admin")
 	viper.SetDefault("jwt.expired-at", "60m")

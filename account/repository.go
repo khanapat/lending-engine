@@ -122,7 +122,7 @@ func (r accountRepositoryDB) ConfirmVerifyEmailRepo(ctx context.Context, account
 
 func (r accountRepositoryDB) GetTermsConditionRepo(ctx context.Context, accountId int) (*TermsCondition, error) {
 	var termsCondition TermsCondition
-	err := r.db.Get(&termsCondition, `
+	err := r.db.GetContext(ctx, &termsCondition, `
 		SELECT account_id, current_accept_version
 		FROM public.terms_condition
 		WHERE account_id = $1
@@ -153,10 +153,10 @@ func (r accountRepositoryDB) AcceptTermsConditionRepo(ctx context.Context, accou
 	return affect, nil
 }
 
-func (r accountRepositoryDB) GetAccountRepo(ctx context.Context, email string) (*Account, error) {
+func (r accountRepositoryDB) GetAccountByEmailRepo(ctx context.Context, email string) (*Account, error) {
 	var account Account
-	err := r.db.Get(&account, `
-		SELECT account_id, first_name, last_name, phone, email, "password", account_number, is_verify
+	err := r.db.GetContext(ctx, &account, `
+		SELECT account_id, first_name, last_name, phone, email, "password", account_number, is_verify, status
 		FROM lending.public.account
 		WHERE email = $1
 	;`, email)
@@ -168,4 +168,20 @@ func (r accountRepositoryDB) GetAccountRepo(ctx context.Context, email string) (
 	default:
 		return &account, nil
 	}
+}
+
+func (r accountRepositoryDB) ConfirmChangePasswordRepo(ctx context.Context, accountId int, password string) (int64, error) {
+	result, err := r.db.ExecContext(ctx, `
+		UPDATE lending.public.account
+		SET password = $1
+		WHERE account_id = $2
+	;`, password, accountId)
+	if err != nil {
+		return 0, err
+	}
+	affect, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return affect, nil
 }

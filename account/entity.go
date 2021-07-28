@@ -11,6 +11,7 @@ type Account struct {
 	Password      *string `db:"password"`
 	AccountNumber *string `db:"account_number"`
 	IsVerify      *bool   `db:"is_verify"`
+	Status        *string `db:"status"`
 }
 
 type TermsCondition struct {
@@ -37,5 +38,6 @@ type AccountRepository interface {
 	ConfirmVerifyEmailRepo(context.Context, int) (int64, error)
 	GetTermsConditionRepo(context.Context, int) (*TermsCondition, error)
 	AcceptTermsConditionRepo(context.Context, int, string) (int64, error)
-	GetAccountRepo(context.Context, string) (*Account, error)
+	GetAccountByEmailRepo(context.Context, string) (*Account, error)
+	ConfirmChangePasswordRepo(context.Context, int, string) (int64, error)
 }

@@ -1,12 +1,16 @@
 package middleware
 
 import (
+	"fmt"
 	"lending-engine/common"
+	"lending-engine/internal/redis"
+	"lending-engine/mail"
 	"lending-engine/response"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
+	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -15,12 +19,20 @@ import (
 )
 
 type middleware struct {
-	ZapLogger *zap.Logger
+	ZapLogger               *zap.Logger
+	CheckExpireDataRedisFn  redis.CheckExpireDataRedisFn
+	GetStructDataRedisFn    redis.GetStructDataRedisFn
+	SetStructWExpireRedisFn redis.SetStructWExpireRedisFn
+	DeleteDataRedisFn       redis.DeleteDataRedisFn
 }
 
-func NewMiddleware(zapLogger *zap.Logger) *middleware {
+func NewMiddleware(zapLogger *zap.Logger, checkExpireDataRedisFn redis.CheckExpireDataRedisFn, getStructDataRedisFn redis.GetStructDataRedisFn, setStructWExpireRedisFn redis.SetStructWExpireRedisFn, deleteDataRedisFn redis.DeleteDataRedisFn) *middleware {
 	return &middleware{
-		ZapLogger: zapLogger,
+		ZapLogger:               zapLogger,
+		CheckExpireDataRedisFn:  checkExpireDataRedisFn,
+		GetStructDataRedisFn:    getStructDataRedisFn,
+		SetStructWExpireRedisFn: setStructWExpireRedisFn,
+		DeleteDataRedisFn:       deleteDataRedisFn,
 	}
 }
 
@@ -101,5 +113,56 @@ func (m *middleware) LoggingMiddleware() fiber.Handler {
 			zap.Int("status_code", c.Response().StatusCode()),
 		)
 		return nil
+	}
+}
+
+func (m *middleware) VerifyOTPMiddleware() fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		bearer := c.Locals(common.JWTClaimsKey).(*jwt.Token)
+		claims := bearer.Claims.(jwt.MapClaims)
+		id := claims["accountId"].(float64)
+		accountId := int(id)
+
+		refNo := string(c.Request().Header.Peek(common.ReferenceOTPKey))
+		otp := string(c.Request().Header.Peek(common.OTPKey))
+
+		m.ZapLogger.Info(fmt.Sprintf("RefNo. - %s | OTP - %s", refNo, otp))
+
+		expiredTime, err := m.CheckExpireDataRedisFn(refNo)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalRedis, err.Error()))
+		}
+		if expiredTime == -2 {
+			return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).OTPRequestInvalid, fmt.Sprintf("RefNo. - %s has already expired.", refNo)))
+		}
+
+		var referenceData mail.ReferenceData
+		if err := m.GetStructDataRedisFn(refNo, &referenceData); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalRedis, err.Error()))
+		}
+
+		m.ZapLogger.Debug(fmt.Sprintf("IN REDIS [ OTP - %s | FailCount - %d | ExpiredTime - %d ]", referenceData.Otp, referenceData.FailCount, expiredTime))
+
+		if referenceData.FailCount >= viper.GetInt("redis.limit-otp") {
+			return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).OTPRequestFailLimit, fmt.Sprintf("RefNo. - %s has %d failed attempts.", refNo, referenceData.FailCount)))
+		}
+
+		if referenceData.Otp != otp {
+			referenceData.FailCount++
+			if err := m.SetStructWExpireRedisFn(refNo, expiredTime, &referenceData); err != nil {
+				return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalRedis, err.Error()))
+			}
+			return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).OTPRequestInvalid, fmt.Sprintf("RefNo. - %s has %d failed attempts.", refNo, referenceData.FailCount)))
+		} else {
+			if err := m.DeleteDataRedisFn(refNo); err != nil {
+				return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalRedis, err.Error()))
+			}
+			if err := m.DeleteDataRedisFn(fmt.Sprintf("%d-%s", accountId, common.PenaltyRedis)); err != nil {
+				return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalRedis, err.Error()))
+			}
+		}
+
+		m.ZapLogger.Info("OTP is valid")
+		return c.Next()
 	}
 }

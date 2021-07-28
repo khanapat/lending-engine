@@ -20,7 +20,7 @@ func NewRequestVerifyEmailClientFn(cli *client.Client) RequestVerifyEmailClientF
 		}
 		m := make(map[string]string)
 		clientRequest := client.Request{
-			URL:                 viper.GetString("client.email-api.url"),
+			URL:                 viper.GetString("client.email-api.verification.url"),
 			Method:              http.MethodPost,
 			XRequestID:          xRequestID,
 			Header:              m,

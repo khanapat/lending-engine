@@ -42,18 +42,31 @@ type InterestTerm struct {
 	InterestRate *float64 `db:"interest_rate" json:"interestRate" example:"0.05"`
 }
 
+type RepayTransaction struct {
+	ID              *int       `db:"id" json:"id" example:"1"`
+	ContractID      *int       `db:"contract_id" json:"contractId" example:"1"`
+	AccountID       *int       `db:"account_id" json:"accountId" example:"1"`
+	Amount          *float64   `db:"amount" json:"amount" example:"1000"`
+	Slip            *string    `db:"slip" json:"slip" example:"<Base64>"`
+	Status          *string    `db:"status" json:"status" example:"CONFIRMED"`
+	CreatedDatetime *time.Time `db:"created_datetime" json:"createdDatetime" example:"2021-01-02 12:13:14"`
+	UpdatedDatetime *time.Time `db:"updated_datetime" json:"updatedDatetime" example:"2021-02-03 12:13:14"`
+}
+
 type LendingRepository interface {
-	QueryDepositByAccountIDRepo(context.Context, int) (*[]ConfirmedDeposit, error)
 	QueryDepositByIDRepo(context.Context, int) (*ConfirmedDeposit, error)
 	QueryDepositRepo(context.Context, map[string]interface{}) (*[]ConfirmedDeposit, error)
-	InsertDepositRepo(context.Context, int, string, int, string, string, float64, string) error
+	InsertDepositRepo(context.Context, int, string, int, string, string, float64, string) (int64, error)
 	UpdateDepositRepo(context.Context, int, string, string) (int64, error)
 	QueryWalletRepo(context.Context, int) (*Wallet, error)
 	UpdateWalletRepo(context.Context, int, float64, float64, *string, string) (int64, error)
-	QueryContractByAccountIDRepo(context.Context, int) (*[]Contract, error)
 	QueryContractByIDRepo(context.Context, int) (*Contract, error)
 	QueryContractRepo(context.Context, map[string]interface{}) (*[]Contract, error)
 	InsertContractRepo(context.Context, int, int, float64, int) (int64, error)
 	UpdateContractRepo(context.Context, int, string, string) (int64, error)
 	QueryInterestTermRepo(context.Context) (*[]InterestTerm, error)
+	QueryRepayTransactionByIDRepo(context.Context, int) (*RepayTransaction, error)
+	QueryRepayTransactionRepo(context.Context, map[string]interface{}) (*[]RepayTransaction, error)
+	InsertRepayTransactionRepo(context.Context, int, int, float64, string) (int64, error)
+	UpdateRepayTransactionRepo(context.Context, int, string, string) (int64, error)
 }

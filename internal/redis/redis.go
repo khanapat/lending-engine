@@ -74,6 +74,21 @@ func NewGetStringDataRedisFn(pool *redis.Pool) GetStringDataRedisFn {
 	}
 }
 
+type GetIntDataRedisFn func(key string) (int, error)
+
+func NewGetIntDataRedisFn(pool *redis.Pool) GetIntDataRedisFn {
+	return func(key string) (int, error) {
+		conn := pool.Get()
+		defer conn.Close()
+
+		data, err := redis.Int(conn.Do("GET", key))
+		if err != nil {
+			return 0, err
+		}
+		return data, nil
+	}
+}
+
 type GetDeleteStringDataRedisFn func(key string) (string, error)
 
 func NewGetDeleteStringDataRedisFn(pool *redis.Pool) GetDeleteStringDataRedisFn {
@@ -147,5 +162,35 @@ func NewGetStructDataRedisFn(pool *redis.Pool) GetStructDataRedisFn {
 			}
 		}
 		return json.Unmarshal([]byte(data), dest)
+	}
+}
+
+type CheckExpireDataRedisFn func(key string) (int, error)
+
+func NewCheckExpireDataRedisFn(pool *redis.Pool) CheckExpireDataRedisFn {
+	return func(key string) (int, error) {
+		conn := pool.Get()
+		defer conn.Close()
+
+		expiredTime, err := redis.Int(conn.Do("TTL", key))
+		if err != nil {
+			return 0, err
+		}
+		return expiredTime, nil
+	}
+}
+
+type DeleteDataRedisFn func(key string) error
+
+func NewDeleteDataRedisFn(pool *redis.Pool) DeleteDataRedisFn {
+	return func(key string) error {
+		conn := pool.Get()
+		defer conn.Close()
+
+		_, err := conn.Do("DEL", key)
+		if err != nil {
+			return err
+		}
+		return nil
 	}
 }

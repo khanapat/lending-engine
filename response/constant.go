@@ -5,6 +5,7 @@ const (
 	ErrInvalidRequestCode      uint64 = 1000
 	ErrRequestExpireCode       uint64 = 1001
 	ErrUnauthorizationCode     uint64 = 4001
+	ErrOTPRequestCode          uint64 = 4002
 	ErrBasicAuthenticationCode uint64 = 4007
 	ErrDatabaseCode            uint64 = 5000
 	ErrRedisCode               uint64 = 5001
@@ -27,6 +28,10 @@ const (
 	ErrAcceptTermsConditionMessageEN     string = "Cannot accept terms & condition."
 	SuccessGetTermsConditionMessageEN    string = "Success get terms & condition."
 	ErrGetTermsConditionMessageEN        string = "Cannot get terms & condition."
+	SuccessRequestResetPasswordMessageEN string = "Success request reset password."
+	ErrRequestResetPasswordMessageEN     string = "Cannot request reset password."
+	SuccessResetPasswordMessageEN        string = "Success reset password."
+	ErrResetPasswordMessageEN            string = "Cannot reset password."
 	// Lending
 	//// User
 	SuccessGetToknPriceMessageEN       string = "Success get token price."
@@ -59,11 +64,19 @@ const (
 	ErrGetRepaymentAdminMessageEN         string = "Cannot get repayment."
 	SuccessConfirmRepaymentAdminMessageEN string = "Success confirm repayment."
 	ErrConfirmRepaymentAdminMessageEN     string = "Cannot confirm repayment."
+	// Mail
+	SuccessOTPRequestMessageEN      string = "Success request otp."
+	ErrOTPRequestMessageEN          string = "Cannot request otp."
+	ErrInvalidOTPMessageEN          string = "OTP is invalid."
+	ErrLimitInvalidOTPMessageEN     string = "Maximum failed otp attempts."
+	ErrLimitOTPRequestMessageEN     string = "Maximum daily requested otp."
+	ErrDuplicateOTPRequestMessageEN string = "OTP request is duplicate."
 	// BasicAuthen
 	ErrBasicAuthenticationMessageEN string = "Authentication failed."
 	// AuthorizeToken
 	ErrAuthorizationTokenMessageEN string = "Unauthorization token."
 	// Desc
+	ErrCooldownDescEN       string = "Please try again later."
 	ErrRequestDataDescEN    string = "Please check request data again."
 	ErrContactAdminDescEN   string = "Please contact administrator for more information."
 	ErrThirdPartyDescEN     string = "Service is unavailable. Please try again later."
@@ -85,6 +98,10 @@ const (
 	ErrAcceptTermsConditionMessageTH     string = "ไม่สามารถยอมรับข้อกำหนดและเงื่อนไขได้."
 	SuccessGetTermsConditionMessageTH    string = "แสดงการยอมรับข้อกำหนดและเงื่อนไขสำเร็จ."
 	ErrGetTermsConditionMessageTH        string = "ไม่สามารถแสดงการยอมรับข้อกำหนดและเงื่อนไขได้."
+	SuccessRequestResetPasswordMessageTH string = "ส่งคำขอร้องเพื่อตั้งรหัสบัญชีใหม่สำเร็จ."
+	ErrRequestResetPasswordMessageTH     string = "ไม่สามารถส่งคำขอร้องเพื่อตั้งรหัสบัญชีใหม่ได้."
+	SuccessResetPasswordMessageTH        string = "ตั้งรหัสบัญชีใหม่สำเร็จ."
+	ErrResetPasswordMessageTH            string = "ไม่สามารถตั้งรหัสบัญชีใหม่ได้."
 	// Lending
 	//// User
 	SuccessGetToknPriceMessageTH       string = "แสดงราคาซื้อขายโทเคนสำเร็จ."
@@ -117,11 +134,19 @@ const (
 	ErrGetRepaymentAdminMessageTH         string = "ไม่สามารถแสดงรายการจ่ายเงินคืนได้."
 	SuccessConfirmRepaymentAdminMessageTH string = "ยืนยันการจ่ายเงินคืนสำเร็จ."
 	ErrConfirmRepaymentAdminMessageTH     string = "ไม่สามารถยืนยันการจ่ายเงินคืนได้."
+	// Mail
+	SuccessOTPRequestMessageTH      string = "ขอรหัส OTP สำเร็จ."
+	ErrOTPRequestMessageTH          string = "ไม่สามารถขอรหัส OTP ได้."
+	ErrInvalidOTPMessageTH          string = "รหัส OTP ไม่ถูกต้อง."
+	ErrLimitInvalidOTPMessageTH     string = "กรอกรหัส OTP ผิดเกินจำนวนที่กำหนด."
+	ErrLimitOTPRequestMessageTH     string = "ขอรหัส OTP มากเกินจำนวนที่กำหนดต่อวัน."
+	ErrDuplicateOTPRequestMessageTH string = "ขอรหัส OTP ซ้ำ."
 	// BasicAuthen
 	ErrBasicAuthenticationMessageTH string = "ยืนยันตัวตนล้มเหลว."
 	// AuthorizeToken
 	ErrAuthorizationTokenMessageTH string = "ตรวจสอบสิทธิ์ล้มเหลว."
 	// Desc
+	ErrCooldownDescTH       string = "กรุณาทำรายการใหม่อีกครั้งภายหลัง."
 	ErrRequestDataDescTH    string = "กรุณาตรวจสอบข้อมูลอีกครั้ง."
 	ErrContactAdminDescTH   string = "กรุณาติดต่อเจ้าหน้าที่ดูแลระบบเพื่อรับข้อมูลเพิ่มเติม."
 	ErrThirdPartyDescTH     string = "ไม่สามารถใช้บริการได้. กรุณาทำรายการใหม่อีกครั้งภายหลัง."

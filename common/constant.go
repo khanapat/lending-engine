@@ -13,11 +13,14 @@ const (
 	XRequestID      string = "X-Request-ID"
 	LocaleKey       string = "locale"
 	JWTClaimsKey    string = "claims"
+	ReferenceOTPKey string = "ReferenceNo"
+	OTPKey          string = "OTP"
 )
 
 const (
 	DateYYYYMMDDHHMMSSFormat string = "2006-01-02 15:04:05"
 	RandomStringInt          string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	RandomInt                string = "0123456789"
 )
 
 const (
@@ -27,4 +30,8 @@ const (
 	ConfirmStatus string = "CONFIRMED"
 	OngoingStatus string = "ONGOING"
 	ClosedStatus  string = "CLOSED"
+)
+
+const (
+	PenaltyRedis string = "Penalty"
 )
