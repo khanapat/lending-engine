@@ -24,12 +24,14 @@ const (
 )
 
 const (
-	THBBTCRedis   string = "THB/BTC"
-	THBETHRedis   string = "THB/ETH"
-	PendingStatus string = "PENDING"
-	ConfirmStatus string = "CONFIRMED"
-	OngoingStatus string = "ONGOING"
-	ClosedStatus  string = "CLOSED"
+	THBBTCRedis    string = "THB/BTC"
+	THBETHRedis    string = "THB/ETH"
+	PendingStatus  string = "PENDING"
+	ConfirmStatus  string = "CONFIRMED"
+	OngoingStatus  string = "ONGOING"
+	ClosedStatus   string = "CLOSED"
+	DepositStatus  string = "DEPOSIT"
+	WithdrawStatus string = "WITHDRAW"
 )
 
 const (

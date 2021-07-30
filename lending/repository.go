@@ -18,11 +18,21 @@ func NewLendingRepositoryDB(db *sqlx.DB) lendingRepositoryDB {
 	}
 }
 
-func (r lendingRepositoryDB) QueryDepositByIDRepo(ctx context.Context, id int) (*ConfirmedDeposit, error) {
-	var deposit ConfirmedDeposit
-	err := r.db.GetContext(ctx, &deposit, `
-		SELECT id, account_id, address, chain_id, txn_hash, collateral_type, volume, status, created_datetime, updated_datetime
-		FROM lending.public.confirmed_deposit
+func (r lendingRepositoryDB) QueryWalletTransactionByIDRepo(ctx context.Context, id int) (*WalletTransaction, error) {
+	var walletTransaction WalletTransaction
+	err := r.db.GetContext(ctx, &walletTransaction, `
+		SELECT	id,
+				account_id,
+				address,
+				chain_id,
+				txn_hash,
+				collateral_type,
+				volume,
+				txn_type,
+				status,
+				created_datetime,
+				updated_datetime
+		FROM lending.public.wallet_transaction
 		WHERE id = $1
 	;`, id)
 	switch {
@@ -31,12 +41,12 @@ func (r lendingRepositoryDB) QueryDepositByIDRepo(ctx context.Context, id int) (
 	case err != nil:
 		return nil, err
 	default:
-		return &deposit, nil
+		return &walletTransaction, nil
 	}
 }
 
-func (r lendingRepositoryDB) QueryDepositRepo(ctx context.Context, request map[string]interface{}) (*[]ConfirmedDeposit, error) {
-	deposits := make([]ConfirmedDeposit, 0)
+func (r lendingRepositoryDB) QueryWalletTransactionRepo(ctx context.Context, request map[string]interface{}) (*[]WalletTransaction, error) {
+	walletTransactions := make([]WalletTransaction, 0)
 	query := `
 		SELECT	id,
 				account_id,
@@ -45,10 +55,11 @@ func (r lendingRepositoryDB) QueryDepositRepo(ctx context.Context, request map[s
 				txn_hash,
 				collateral_type,
 				volume,
+				txn_type,
 				status,
 				created_datetime,
 				updated_datetime
-		FROM lending.public.confirmed_deposit
+		FROM lending.public.wallet_transaction
 		WHERE 1 = 1
 	`
 	for key, _ := range request {
@@ -59,20 +70,20 @@ func (r lendingRepositoryDB) QueryDepositRepo(ctx context.Context, request map[s
 		return nil, err
 	}
 	for rows.Next() {
-		var deposit ConfirmedDeposit
-		if err := rows.StructScan(&deposit); err != nil {
+		var walletTransaction WalletTransaction
+		if err := rows.StructScan(&walletTransaction); err != nil {
 			return nil, err
 		}
-		deposits = append(deposits, deposit)
+		walletTransactions = append(walletTransactions, walletTransaction)
 	}
 	defer rows.Close()
-	return &deposits, nil
+	return &walletTransactions, nil
 }
 
-func (r lendingRepositoryDB) InsertDepositRepo(ctx context.Context, accountId int, address string, chainId int, txnHash string, collateralType string, volume float64, status string) (int64, error) {
+func (r lendingRepositoryDB) InsertDepositRepo(ctx context.Context, accountId int, address string, chainId int, txnHash string, collateralType string, volume float64, txnType string, status string) (int64, error) {
 	var depositId int64
 	if err := r.db.QueryRowContext(ctx, `
-		INSERT INTO lending.public.confirmed_deposit
+		INSERT INTO lending.public.wallet_transaction
 		(
 			account_id,
 			address,
@@ -80,6 +91,55 @@ func (r lendingRepositoryDB) InsertDepositRepo(ctx context.Context, accountId in
 			txn_hash,
 			collateral_type,
 			volume,
+			txn_type,
+			status
+		)
+		VALUES
+		(
+			$1,
+			$2,
+			$3,
+			$4,
+			$5,
+			$6,
+			$7,
+			$8
+		)
+		RETURNING id
+	;`, accountId, address, chainId, txnHash, collateralType, volume, txnType, status).Scan(&depositId); err != nil {
+		return 0, err
+	}
+	return depositId, nil
+}
+
+func (r lendingRepositoryDB) UpdateDepositRepo(ctx context.Context, id int, status string, timestamp string) (int64, error) {
+	result, err := r.db.ExecContext(ctx, `
+		UPDATE lending.public.wallet_transaction
+		SET 	status = $1,
+				updated_datetime = $2
+		WHERE id = $3
+	;`, status, timestamp, id)
+	if err != nil {
+		return 0, err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rows, nil
+}
+
+func (r lendingRepositoryDB) InsertWithdrawRepo(ctx context.Context, accountId int, address string, chainId int, collateralType string, volume float64, txnType string, status string) (int64, error) {
+	var withdrawId int64
+	if err := r.db.QueryRowContext(ctx, `
+		INSERT INTO lending.public.wallet_transaction
+		(
+			account_id,
+			address,
+			chain_id,
+			collateral_type,
+			volume,
+			txn_type,
 			status
 		)
 		VALUES
@@ -93,19 +153,20 @@ func (r lendingRepositoryDB) InsertDepositRepo(ctx context.Context, accountId in
 			$7
 		)
 		RETURNING id
-	;`, accountId, address, chainId, txnHash, collateralType, volume, status).Scan(&depositId); err != nil {
+	;`, accountId, address, chainId, collateralType, volume, txnType, status).Scan(&withdrawId); err != nil {
 		return 0, err
 	}
-	return depositId, nil
+	return withdrawId, nil
 }
 
-func (r lendingRepositoryDB) UpdateDepositRepo(ctx context.Context, id int, status string, timestamp string) (int64, error) {
+func (r lendingRepositoryDB) UpdateWithdrawRepo(ctx context.Context, id int, txnHash string, status string, timestamp string) (int64, error) {
 	result, err := r.db.ExecContext(ctx, `
-		UPDATE lending.public.confirmed_deposit
+		UPDATE lending.public.wallet_transaction
 		SET 	status = $1,
-				updated_datetime = $2
-		WHERE id = $3
-	;`, status, timestamp, id)
+				txn_hash = $2,
+				updated_datetime = $3
+		WHERE id = $4
+	;`, status, txnHash, timestamp, id)
 	if err != nil {
 		return 0, err
 	}

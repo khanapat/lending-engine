@@ -151,8 +151,9 @@ func main() {
 	baseApi.Get("/admin/account", handler.Helper(accountHandler.GetAccountAdmin, logger))
 	baseApi.Get("/admin/account/:id", handler.Helper(accountHandler.ConfirmAccountAdmin, logger))
 
-	baseApi.Get("/admin/deposit", handler.Helper(lendingHandler.GetDepositAdmin, logger))
+	baseApi.Get("/admin/wallet/transaction", handler.Helper(lendingHandler.GetWalletTransactionAdmin, logger))
 	baseApi.Get("/admin/deposit/:id", handler.Helper(lendingHandler.ConfirmDepositAdmin, logger))
+	baseApi.Get("/admin/withdraw/:id/:txnHash", handler.Helper(lendingHandler.ConfirmWithdrawAdmin, logger))
 
 	baseApi.Get("/admin/contract", handler.Helper(lendingHandler.GetLoanAdmin, logger))
 	baseApi.Get("/admin/contract/:id", handler.Helper(lendingHandler.ConfirmLoanAdmin, logger))
@@ -165,8 +166,9 @@ func main() {
 	baseApi.Get("/terms", handler.Helper(accountHandler.GetTermsCondition, logger))
 	baseApi.Get("/terms/:version", handler.Helper(accountHandler.AcceptTermsCondition, logger))
 
-	baseApi.Get("/deposit", handler.Helper(lendingHandler.GetDepositStatus, logger))
+	baseApi.Get("/wallet/transaction", handler.Helper(lendingHandler.GetWalletTransaction, logger))
 	baseApi.Post("/deposit", handler.Helper(lendingHandler.SubmitDeposit, logger))
+	baseApi.Post("/withdraw", handler.Helper(lendingHandler.SubmitWithdraw, logger))
 
 	baseApi.Get("/credit", handler.Helper(lendingHandler.GetCreditAvailable, logger))
 	baseApi.Get("/contract", handler.Helper(lendingHandler.GetLoan, logger))

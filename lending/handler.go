@@ -98,16 +98,16 @@ func (s *lendingHandler) PreCalculationLoan(c *handler.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).PreCalculationLoanSuccess, &preCalculationLoanResponse))
 }
 
-func (s *lendingHandler) GetDepositStatus(c *handler.Ctx) error {
+func (s *lendingHandler) GetWalletTransaction(c *handler.Ctx) error {
 	bearer := c.Locals(common.JWTClaimsKey).(*jwt.Token)
 	claims := bearer.Claims.(jwt.MapClaims)
 	id := claims["accountId"].(float64)
 
-	deposits, err := s.LendingRepository.QueryDepositRepo(c.Context(), map[string]interface{}{"account_id": id})
+	deposits, err := s.LendingRepository.QueryWalletTransactionRepo(c.Context(), map[string]interface{}{"account_id": id})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
-	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetDepositSuccess, &deposits))
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetWalletTransactionSuccess, &deposits))
 }
 
 func (s *lendingHandler) SubmitDeposit(c *handler.Ctx) error {
@@ -144,7 +144,7 @@ func (s *lendingHandler) SubmitDeposit(c *handler.Ctx) error {
 
 	c.Log().Info(fmt.Sprintf("Deposit Status: %s", status))
 
-	depositId, err := s.LendingRepository.InsertDepositRepo(c.Context(), accountId, req.Address, req.ChainID, req.TxnHash, req.CollateralType, req.Volume, status)
+	depositId, err := s.LendingRepository.InsertDepositRepo(c.Context(), accountId, req.Address, req.ChainID, req.TxnHash, req.CollateralType, req.Volume, common.DepositStatus, status)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
@@ -183,12 +183,38 @@ func (s *lendingHandler) SubmitDeposit(c *handler.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).SubmitDepositSuccess, &submitDepositResponse))
 }
 
-func (s *lendingHandler) GetDepositAdmin(c *handler.Ctx) error {
-	var req GetDepositAdminRequest
-	if err := c.QueryParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).GetDepositAdminRequest, err.Error()))
+func (s *lendingHandler) SubmitWithdraw(c *handler.Ctx) error {
+	bearer := c.Locals(common.JWTClaimsKey).(*jwt.Token)
+	claims := bearer.Claims.(jwt.MapClaims)
+	id := claims["accountId"].(float64)
+	accountId := int(id)
+
+	var req SubmitWithdrawRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).SubmitWithdrawRequest, err.Error()))
 	}
-	m := make(map[string]interface{})
+	if err := req.validate(); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).SubmitWithdrawRequest, err.Error()))
+	}
+
+	withdrawId, err := s.LendingRepository.InsertWithdrawRepo(c.Context(), accountId, req.Address, req.ChainID, req.CollateralType, req.Volume, common.WithdrawStatus, common.PendingStatus)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	submitWithdrawResponse := SubmitWithdrawResponse{
+		WithdrawID: withdrawId,
+	}
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).SubmitWithdrawSuccess, &submitWithdrawResponse))
+}
+
+func (s *lendingHandler) GetWalletTransactionAdmin(c *handler.Ctx) error {
+	var req GetWalletTransactionAdminRequest
+	if err := c.QueryParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).GetWalletTransactionAdminRequest, err.Error()))
+	}
+	m := map[string]interface{}{
+		"txn_type": req.TxnType,
+	}
 	if req.ID != nil {
 		m["id"] = req.ID
 	}
@@ -198,11 +224,11 @@ func (s *lendingHandler) GetDepositAdmin(c *handler.Ctx) error {
 	if req.Address != nil {
 		m["address"] = req.Address
 	}
-	lists, err := s.LendingRepository.QueryDepositRepo(c.Context(), m)
+	lists, err := s.LendingRepository.QueryWalletTransactionRepo(c.Context(), m)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
-	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetDepositAdminSuccess, &lists))
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetWalletTransactionAdminSuccess, &lists))
 }
 
 func (s *lendingHandler) ConfirmDepositAdmin(c *handler.Ctx) error {
@@ -211,15 +237,18 @@ func (s *lendingHandler) ConfirmDepositAdmin(c *handler.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmDepositAdminRequest, err.Error()))
 	}
 
-	deposit, err := s.LendingRepository.QueryDepositByIDRepo(c.Context(), id)
+	txn, err := s.LendingRepository.QueryWalletTransactionByIDRepo(c.Context(), id)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
-	if deposit == nil {
+	if txn == nil {
 		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmDepositAdminRequest, "ID doesn't exist."))
 	}
-	if *deposit.Status != common.PendingStatus {
-		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, "This id has already confirmed or cancelled."))
+	if *txn.Status != common.PendingStatus {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmDepositAdminRequest, "This id has already confirmed or cancelled."))
+	}
+	if *txn.TxnType != common.DepositStatus {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmDepositAdminRequest, "This id isn't deposit method."))
 	}
 
 	depositRows, err := s.LendingRepository.UpdateDepositRepo(c.Context(), id, common.ConfirmStatus, time.Now().Format(common.DateYYYYMMDDHHMMSSFormat))
@@ -230,7 +259,7 @@ func (s *lendingHandler) ConfirmDepositAdmin(c *handler.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, fmt.Sprintf("expected to affect 1 row, affected %d", depositRows)))
 	}
 
-	wallet, err := s.LendingRepository.QueryWalletRepo(c.Context(), *deposit.AccountID)
+	wallet, err := s.LendingRepository.QueryWalletRepo(c.Context(), *txn.AccountID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
@@ -240,24 +269,92 @@ func (s *lendingHandler) ConfirmDepositAdmin(c *handler.Ctx) error {
 
 	btc := *wallet.BTCVolume
 	eth := *wallet.ETHVolume
-	switch *deposit.CollateralType {
+	switch *txn.CollateralType {
 	case "BTC":
-		btc += *deposit.Volume
+		btc += *txn.Volume
 	case "ETH":
-		eth += *deposit.Volume
+		eth += *txn.Volume
 	default:
-		c.Log().Info(fmt.Sprintf("AccountID: %d can't update collateral volume (%s - %f).", *deposit.AccountID, *deposit.CollateralType, *deposit.Volume))
+		c.Log().Info(fmt.Sprintf("AccountID: %d can't update collateral volume (%s - %f).", *txn.AccountID, *txn.CollateralType, *txn.Volume))
 	}
-	walletRows, err := s.LendingRepository.UpdateWalletRepo(c.Context(), *deposit.AccountID, btc, eth, wallet.MarginCallDate, time.Now().Format(common.DateYYYYMMDDHHMMSSFormat))
+	walletRows, err := s.LendingRepository.UpdateWalletRepo(c.Context(), *txn.AccountID, btc, eth, wallet.MarginCallDate, time.Now().Format(common.DateYYYYMMDDHHMMSSFormat))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
 	if walletRows != 1 {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, fmt.Sprintf("expected to affect 1 row, affected %d", walletRows)))
 	}
-	c.Log().Info(fmt.Sprintf("AccountID: %d | BTC: %f | ETH: %f", *deposit.AccountID, btc, eth))
+	c.Log().Info(fmt.Sprintf("AccountID: %d | BTC: %f | ETH: %f", *txn.AccountID, btc, eth))
 
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).ConfirmDepositAdminSuccess, nil))
+}
+
+func (s *lendingHandler) ConfirmWithdrawAdmin(c *handler.Ctx) error {
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmWithdrawAdminRequest, err.Error()))
+	}
+	txnHash := c.Params("txnHash")
+	if txnHash == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmWithdrawAdminRequest, fmt.Sprintf("'txnHash' must be REQUIRED field but the input is '%v'.", txnHash)))
+	}
+
+	txn, err := s.LendingRepository.QueryWalletTransactionByIDRepo(c.Context(), id)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if txn == nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmWithdrawAdminRequest, "ID doesn't exist."))
+	}
+	if *txn.Status != common.PendingStatus {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmWithdrawAdminRequest, "This id has already confirmed or cancelled."))
+	}
+	if *txn.TxnType != common.WithdrawStatus {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmWithdrawAdminRequest, "This id isn't withdraw method."))
+	}
+
+	withdrawRows, err := s.LendingRepository.UpdateWithdrawRepo(c.Context(), id, txnHash, common.ConfirmStatus, time.Now().Format(common.DateYYYYMMDDHHMMSSFormat))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if withdrawRows != 1 {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, fmt.Sprintf("expected to affect 1 row, affected %d", withdrawRows)))
+	}
+
+	wallet, err := s.LendingRepository.QueryWalletRepo(c.Context(), *txn.AccountID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if wallet == nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, "Wallet doesn't exist."))
+	}
+
+	btc := *wallet.BTCVolume
+	eth := *wallet.ETHVolume
+	switch *txn.CollateralType {
+	case "BTC":
+		btc -= *txn.Volume
+		if btc < 0 {
+			btc = 0
+		}
+	case "ETH":
+		eth -= *txn.Volume
+		if eth < 0 {
+			eth = 0
+		}
+	default:
+		c.Log().Info(fmt.Sprintf("AccountID: %d can't update collateral volume (%s - %f).", *txn.AccountID, *txn.CollateralType, *txn.Volume))
+	}
+	walletRows, err := s.LendingRepository.UpdateWalletRepo(c.Context(), *txn.AccountID, btc, eth, wallet.MarginCallDate, time.Now().Format(common.DateYYYYMMDDHHMMSSFormat))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if walletRows != 1 {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, fmt.Sprintf("expected to affect 1 row, affected %d", walletRows)))
+	}
+	c.Log().Info(fmt.Sprintf("AccountID: %d | BTC: %f | ETH: %f", *txn.AccountID, btc, eth))
+
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).ConfirmWithdrawAdminSuccess, nil))
 }
 
 func (s *lendingHandler) GetCreditAvailable(c *handler.Ctx) error {

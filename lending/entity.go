@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type ConfirmedDeposit struct {
+type WalletTransaction struct {
 	ID              *int       `db:"id" json:"id" example:"1"`
 	AccountID       *int       `db:"account_id" json:"accountId" example:"1"`
 	Address         *string    `db:"address" json:"address" example:"0xa9B6D99bA92D7d691c6EF4f49A1DC909822Cee46"`
@@ -13,6 +13,7 @@ type ConfirmedDeposit struct {
 	TxnHash         *string    `db:"txn_hash" json:"txnHash" example:"0xcbeafcd4c82144f7d1f9b94e4ed43e9ed1aa1434feb65a06fed97fee993ba075"`
 	CollateralType  *string    `db:"collateral_type" json:"collateralType" example:"BTC"`
 	Volume          *float64   `db:"volume" json:"volume" example:"0.5"`
+	TxnType         *string    `db:"txn_type" json:"txnType" example:"DEPOSIT"`
 	Status          *string    `db:"status" json:"status" example:"PENDING"`
 	CreatedDatetime *time.Time `db:"created_datetime" json:"createdDatetime" example:"2021-01-02 12:13:14"`
 	UpdatedDatetime *time.Time `db:"updated_datetime" json:"updatedDatetime" example:"2021-02-03 12:13:14"`
@@ -54,10 +55,12 @@ type RepayTransaction struct {
 }
 
 type LendingRepository interface {
-	QueryDepositByIDRepo(context.Context, int) (*ConfirmedDeposit, error)
-	QueryDepositRepo(context.Context, map[string]interface{}) (*[]ConfirmedDeposit, error)
-	InsertDepositRepo(context.Context, int, string, int, string, string, float64, string) (int64, error)
+	QueryWalletTransactionByIDRepo(context.Context, int) (*WalletTransaction, error)
+	QueryWalletTransactionRepo(context.Context, map[string]interface{}) (*[]WalletTransaction, error)
+	InsertDepositRepo(context.Context, int, string, int, string, string, float64, string, string) (int64, error)
 	UpdateDepositRepo(context.Context, int, string, string) (int64, error)
+	InsertWithdrawRepo(context.Context, int, string, int, string, float64, string, string) (int64, error)
+	UpdateWithdrawRepo(context.Context, int, string, string, string) (int64, error)
 	QueryWalletRepo(context.Context, int) (*Wallet, error)
 	UpdateWalletRepo(context.Context, int, float64, float64, *string, string) (int64, error)
 	QueryContractByIDRepo(context.Context, int) (*Contract, error)

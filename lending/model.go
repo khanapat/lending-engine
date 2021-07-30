@@ -40,10 +40,47 @@ type SubmitDepositResponse struct {
 	DepositID int64 `json:"depositId" example:"1"`
 }
 
-type GetDepositAdminRequest struct {
+// withdraw
+type SubmitWithdrawRequest struct {
+	Address        string  `json:"address" example:"0xc083EB69aa7215f4AFa7a22dcbfCC1a33999371C"`
+	ChainID        int     `json:"chainId" example:"1"`
+	CollateralType string  `json:"collateralType" example:"BTC"`
+	Volume         float64 `json:"volume" example:"0.5"`
+}
+
+func (req *SubmitWithdrawRequest) validate() error {
+	if utf8.RuneCountInString(req.Address) == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'address' must be REQUIRED field but the input is '%v'.", req.Address)), response.ValidateFieldError)
+	}
+	if req.ChainID == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'chainId' must be REQUIRED field but the input is '%v'.", req.ChainID)), response.ValidateFieldError)
+	}
+	if utf8.RuneCountInString(req.CollateralType) == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'collateralType' must be REQUIRED field but the input is '%v'.", req.CollateralType)), response.ValidateFieldError)
+	}
+	if req.Volume == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'volume' must be REQUIRED field but the input is '%v'.", req.Volume)), response.ValidateFieldError)
+	}
+	return nil
+}
+
+type SubmitWithdrawResponse struct {
+	WithdrawID int64 `json:"withdrawId" example:"1"`
+}
+
+// wallet transaction
+type GetWalletTransactionAdminRequest struct {
 	ID        *int    `json:"id" example:"1"`
 	AccountID *int    `json:"accountId" example:"4"`
 	Address   *string `json:"address" example:"0xc083EB69aa7215f4AFa7a22dcbfCC1a33999371C"`
+	TxnType   string  `json:"txnType" example:"DEPOSIT"`
+}
+
+func (req *GetWalletTransactionAdminRequest) validate() error {
+	if utf8.RuneCountInString(req.TxnType) == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'txnType' must be REQUIRED field but the input is '%v'.", req.TxnType)), response.ValidateFieldError)
+	}
+	return nil
 }
 
 // credit
