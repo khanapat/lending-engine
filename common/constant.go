@@ -28,6 +28,7 @@ const (
 	THBETHRedis    string = "THB/ETH"
 	PendingStatus  string = "PENDING"
 	ConfirmStatus  string = "CONFIRMED"
+	RejectStatus   string = "REJECTED"
 	OngoingStatus  string = "ONGOING"
 	ClosedStatus   string = "CLOSED"
 	DepositStatus  string = "DEPOSIT"

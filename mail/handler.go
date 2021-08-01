@@ -34,6 +34,17 @@ func NewMailHandler(queryAccountByIDFn QueryAccountByIDFn, checkExpireDataRedisF
 	}
 }
 
+// RequestOTP
+// @Summary Request OTP Email
+// @Description request otp from email
+// @Tags Mail
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response{data=mail.OtpMailResponse} "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Security ApiKeyAuth
+// @Router /otp [get]
 func (s *mailHandler) Otp(c *handler.Ctx) error {
 	bearer := c.Locals(common.JWTClaimsKey).(*jwt.Token)
 	claims := bearer.Claims.(jwt.MapClaims)

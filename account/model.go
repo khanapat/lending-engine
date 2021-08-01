@@ -8,17 +8,18 @@ import (
 	"github.com/pkg/errors"
 )
 
+// signup
 type SignUpRequest struct {
-	FirstName      string `json:"firstName"`
-	LastName       string `json:"lastName"`
-	Phone          string `json:"phone"`
-	Email          string `json:"email"`
-	Password       string `json:"password"`
-	AccountNumber  string `json:"accountNumber"`
-	CitizenName    string `json:"citizenName"`
-	CitizenCard    string `json:"citizenCard"`
-	BookBankName   string `json:"bookBankName"`
-	BookBankLedger string `json:"bookBankLedger"`
+	FirstName      string `json:"firstName" example:"Frank"`
+	LastName       string `json:"lastName" example:"Style"`
+	Phone          string `json:"phone" example:"0812345678"`
+	Email          string `json:"email" example:"k.apiwattanawong@gmail.com"`
+	Password       string `json:"password" example:"bobo"`
+	AccountNumber  string `json:"accountNumber" example:"000000000"`
+	CitizenName    string `json:"citizenName" example:"identity.jpg"`
+	CitizenCard    string `json:"citizenCard" example:"<Base64>"`
+	BookBankName   string `json:"bookBankName" example:"book.jpg"`
+	BookBankLedger string `json:"bookBankLedger" example:"<Base64>"`
 }
 
 func (req *SignUpRequest) validate() error {
@@ -55,6 +56,11 @@ func (req *SignUpRequest) validate() error {
 	return nil
 }
 
+type SignUpResponse struct {
+	AccountID int64 `json:"accountId" example:"1"`
+}
+
+// get account admin
 type GetAccountAdminRequest struct {
 	AccountID *int    `json:"accountId" example:"1"`
 	Email     *string `json:"email" example:"k.apiwattanawong@gmail.com"`
@@ -82,9 +88,58 @@ type Document struct {
 	Tag          string `json:"tag" example:"id"`
 }
 
+// confirm account admin
+type ConfirmAccountAdminRequest struct {
+	AccountID int `json:"accountId" example:"1"`
+}
+
+func (req *ConfirmAccountAdminRequest) validate() error {
+	if req.AccountID == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'accountId' must be REQUIRED field but the input is '%v'.", req.AccountID)), response.ValidateFieldError)
+	}
+	return nil
+}
+
+// reject account admin
+type RejectAccountAdminRequest struct {
+	AccountID int `json:"accountId" example:"1"`
+}
+
+func (req *RejectAccountAdminRequest) validate() error {
+	if req.AccountID == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'accountId' must be REQUIRED field but the input is '%v'.", req.AccountID)), response.ValidateFieldError)
+	}
+	return nil
+}
+
+// update account document admin
+type UpdateAccountDocumentAdminRequest struct {
+	AccountID   int    `json:"accountId" example:"1"`
+	DocumentID  int    `json:"documentId" example:"1"`
+	FileName    string `json:"fileName" example:"ID.jpg"`
+	FileContext string `json:"fileContext" example:"<Base64>"`
+}
+
+func (req *UpdateAccountDocumentAdminRequest) validate() error {
+	if req.AccountID == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'accountId' must be REQUIRED field but the input is '%v'.", req.AccountID)), response.ValidateFieldError)
+	}
+	if req.DocumentID == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'documentId' must be REQUIRED field but the input is '%v'.", req.DocumentID)), response.ValidateFieldError)
+	}
+	if utf8.RuneCountInString(req.FileName) == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'fileName' must be REQUIRED field but the input is '%v'.", req.FileName)), response.ValidateFieldError)
+	}
+	if utf8.RuneCountInString(req.FileContext) == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'fileContext' must be REQUIRED field but the input is '%v'.", req.FileContext)), response.ValidateFieldError)
+	}
+	return nil
+}
+
+// login
 type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" example:"k.apiwattanawong@gmail.com"`
+	Password string `json:"password" example:"password"`
 }
 
 func (req *LoginRequest) validate() error {
@@ -101,6 +156,19 @@ type LoginResponse struct {
 	Token string `json:"token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDk2ODI2MzYsImlzcyI6ImFkbWluIn0.7MuvPeUSTlSvto45t3pqM5j7ZDxAVJnlBbEzq9ZJT0k"`
 }
 
+// term
+type AcceptTermsConditionRequest struct {
+	Version string `json:"version" example:"1.0.0"`
+}
+
+func (req *AcceptTermsConditionRequest) validate() error {
+	if utf8.RuneCountInString(req.Version) == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'version' must be REQUIRED field but the input is '%v'.", req.Version)), response.ValidateFieldError)
+	}
+	return nil
+}
+
+// request verify email
 type SendVerifyEmailClientRequest struct {
 	From     string                    `json:"from" example:"k.apiwattanawong@gmail.com"`
 	To       []string                  `json:"to" example:"[yoisak4@gmail.com]"`
@@ -120,6 +188,7 @@ type SendVerifyEmailClientResult struct {
 	Description string `json:"description" example:"Please contact administrator for more information."`
 }
 
+// request reset password
 type RequestResetPasswordRequest struct {
 	Email string `json:"email" example:"k.apiwattanawong@gmail.com"`
 }
@@ -142,6 +211,7 @@ type RequestResetPasswordResponse struct {
 	ExpiredTime string `json:"expiredTime" example:"2021-01-02 12:13:14"`
 }
 
+// reset password
 type ResetPasswordRequest struct {
 	NewPassword string `json:"newPassword" example:"BOBO"`
 }

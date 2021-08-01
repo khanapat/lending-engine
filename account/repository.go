@@ -177,6 +177,24 @@ func (r accountRepositoryDB) UpdateAccountRepo(ctx context.Context, accountId in
 	return rows, nil
 }
 
+func (r accountRepositoryDB) UpdateAccountDocumentRepo(ctx context.Context, accountId int, documentId int, fileName string, fileContext string) (int64, error) {
+	result, err := r.db.ExecContext(ctx, `
+		UPDATE lending.public.account_document
+		SET		file_name = $1,
+				file_context = $2
+		WHERE	account_id = $3
+		AND		document_id = $4
+	;`, fileName, fileContext, accountId, documentId)
+	if err != nil {
+		return 0, err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rows, nil
+}
+
 func (r accountRepositoryDB) CreateWalletRepo(ctx context.Context, accountId int) error {
 	_, err := r.db.ExecContext(ctx, `
 		INSERT INTO lending.public.wallet

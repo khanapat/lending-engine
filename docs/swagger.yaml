@@ -1,19 +1,1570 @@
-basePath: /template-api
+basePath: /lending-engine
+definitions:
+  account.AcceptTermsConditionRequest:
+    properties:
+      version:
+        example: 1.0.0
+        type: string
+    type: object
+  account.ConfirmAccountAdminRequest:
+    properties:
+      accountId:
+        example: 1
+        type: integer
+    type: object
+  account.Document:
+    properties:
+      documentId:
+        example: 1
+        type: integer
+      documentType:
+        example: CITIZEN ID
+        type: string
+      fileContext:
+        example: <Base64>
+        type: string
+      fileName:
+        example: cid.pdf
+        type: string
+      tag:
+        example: id
+        type: string
+    type: object
+  account.GetAccountAdminResponse:
+    properties:
+      accountId:
+        example: 1
+        type: integer
+      accountNumber:
+        example: "11111111"
+        type: string
+      document:
+        items:
+          $ref: '#/definitions/account.Document'
+        type: array
+      email:
+        example: k.apiwattanawong@gmail.com
+        type: string
+      firstName:
+        example: Khanapat
+        type: string
+      isVerify:
+        example: true
+        type: boolean
+      lastName:
+        example: Apiwattanawong
+        type: string
+      password:
+        example: <bcrypt>
+        type: string
+      phone:
+        example: "0811111111"
+        type: string
+      status:
+        example: PENDING
+        type: string
+      termCondition:
+        example: 1.0.0
+        type: string
+    type: object
+  account.LoginRequest:
+    properties:
+      email:
+        example: k.apiwattanawong@gmail.com
+        type: string
+      password:
+        example: password
+        type: string
+    type: object
+  account.LoginResponse:
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDk2ODI2MzYsImlzcyI6ImFkbWluIn0.7MuvPeUSTlSvto45t3pqM5j7ZDxAVJnlBbEzq9ZJT0k
+        type: string
+    type: object
+  account.RejectAccountAdminRequest:
+    properties:
+      accountId:
+        example: 1
+        type: integer
+    type: object
+  account.RequestResetPasswordRequest:
+    properties:
+      email:
+        example: k.apiwattanawong@gmail.com
+        type: string
+    type: object
+  account.RequestResetPasswordResponse:
+    properties:
+      expiredTime:
+        example: "2021-01-02 12:13:14"
+        type: string
+      referenceNo:
+        example: XXXXXX
+        type: string
+    type: object
+  account.ResetPasswordRequest:
+    properties:
+      newPassword:
+        example: BOBO
+        type: string
+    type: object
+  account.SignUpRequest:
+    properties:
+      accountNumber:
+        example: "000000000"
+        type: string
+      bookBankLedger:
+        example: <Base64>
+        type: string
+      bookBankName:
+        example: book.jpg
+        type: string
+      citizenCard:
+        example: <Base64>
+        type: string
+      citizenName:
+        example: identity.jpg
+        type: string
+      email:
+        example: k.apiwattanawong@gmail.com
+        type: string
+      firstName:
+        example: Frank
+        type: string
+      lastName:
+        example: Style
+        type: string
+      password:
+        example: bobo
+        type: string
+      phone:
+        example: "0812345678"
+        type: string
+    type: object
+  account.SignUpResponse:
+    properties:
+      accountId:
+        example: 1
+        type: integer
+    type: object
+  account.TermsCondition:
+    properties:
+      accountId:
+        type: integer
+      currentAcceptVersion:
+        type: string
+    type: object
+  account.UpdateAccountDocumentAdminRequest:
+    properties:
+      accountId:
+        example: 1
+        type: integer
+      documentId:
+        example: 1
+        type: integer
+      fileContext:
+        example: <Base64>
+        type: string
+      fileName:
+        example: ID.jpg
+        type: string
+    type: object
+  lending.BorrowLoanRequest:
+    properties:
+      interestCode:
+        example: 1
+        type: integer
+      loan:
+        example: 1000
+        type: number
+      term:
+        example: 12
+        type: integer
+    type: object
+  lending.BorrowLoanResponse:
+    properties:
+      contractId:
+        example: 1
+        type: integer
+    type: object
+  lending.ConfirmDepositAdminRequest:
+    properties:
+      id:
+        example: 1
+        type: integer
+    type: object
+  lending.ConfirmLoanAdminRequest:
+    properties:
+      id:
+        example: 1
+        type: integer
+    type: object
+  lending.ConfirmRepayAdminRequest:
+    properties:
+      id:
+        example: 1
+        type: integer
+    type: object
+  lending.ConfirmWithdrawAdminRequest:
+    properties:
+      id:
+        example: 1
+        type: integer
+      txnHash:
+        example: 0xC26880A0AF2EA0c7E8130e6EC47Af756465452E8
+        type: string
+    type: object
+  lending.Contract:
+    properties:
+      accountId:
+        example: 1
+        type: integer
+      contractId:
+        example: 1
+        type: integer
+      createdDatetime:
+        example: "2021-01-02 12:13:14"
+        type: string
+      interestCode:
+        example: 1
+        type: integer
+      loanOutstanding:
+        example: 20000
+        type: number
+      status:
+        example: CLOSED
+        type: string
+      term:
+        example: 12
+        type: integer
+      updatedDatetime:
+        example: "2021-02-03 12:13:14"
+        type: string
+    type: object
+  lending.GetCreditAvailableResponse:
+    properties:
+      btcVolume:
+        example: 0.1
+        type: number
+      collateralValue:
+        example: 10000
+        type: number
+      creditAvailable:
+        example: 10000
+        type: number
+      ethVolume:
+        example: 0.1
+        type: number
+      loanOutstanding:
+        example: 0
+        type: number
+    type: object
+  lending.GetTokenPriceResponse:
+    properties:
+      btc:
+        $ref: '#/definitions/lending.TokenPrice'
+      eth:
+        $ref: '#/definitions/lending.TokenPrice'
+      interestRate:
+        example: 0.05
+        type: number
+    type: object
+  lending.InterestTerm:
+    properties:
+      interestCode:
+        example: 1
+        type: integer
+      interestRate:
+        example: 0.05
+        type: number
+    type: object
+  lending.RejectDepositAdminRequest:
+    properties:
+      id:
+        example: 1
+        type: integer
+    type: object
+  lending.RejectRepayAdminRequest:
+    properties:
+      id:
+        example: 1
+        type: integer
+    type: object
+  lending.RejectWithdrawAdminRequest:
+    properties:
+      id:
+        example: 1
+        type: integer
+    type: object
+  lending.RepayTransaction:
+    properties:
+      accountId:
+        example: 1
+        type: integer
+      amount:
+        example: 1000
+        type: number
+      contractId:
+        example: 1
+        type: integer
+      createdDatetime:
+        example: "2021-01-02 12:13:14"
+        type: string
+      id:
+        example: 1
+        type: integer
+      slip:
+        example: <Base64>
+        type: string
+      status:
+        example: CONFIRMED
+        type: string
+      updatedDatetime:
+        example: "2021-02-03 12:13:14"
+        type: string
+    type: object
+  lending.SubmitDepositRequest:
+    properties:
+      address:
+        example: 0xc083EB69aa7215f4AFa7a22dcbfCC1a33999371C
+        type: string
+      chainId:
+        example: 1
+        type: integer
+      collateralType:
+        example: BTC
+        type: string
+      txnHash:
+        example: 0xf5a3aa87c40b05e6a308b61186eeded8996b654a9895401b8089a2966b54f618
+        type: string
+      volume:
+        example: 0.5
+        type: number
+    type: object
+  lending.SubmitDepositResponse:
+    properties:
+      depositId:
+        example: 1
+        type: integer
+    type: object
+  lending.SubmitRepayRequest:
+    properties:
+      amount:
+        example: 1000
+        type: integer
+      contractId:
+        example: 1
+        type: integer
+      slip:
+        example: <Base64>
+        type: string
+    type: object
+  lending.SubmitRepayResponse:
+    properties:
+      repayId:
+        example: 1
+        type: integer
+    type: object
+  lending.SubmitWithdrawRequest:
+    properties:
+      address:
+        example: 0xc083EB69aa7215f4AFa7a22dcbfCC1a33999371C
+        type: string
+      chainId:
+        example: 1
+        type: integer
+      collateralType:
+        example: BTC
+        type: string
+      volume:
+        example: 0.5
+        type: number
+    type: object
+  lending.SubmitWithdrawResponse:
+    properties:
+      withdrawId:
+        example: 1
+        type: integer
+    type: object
+  lending.TokenPrice:
+    properties:
+      haircut:
+        example: 0.5
+        type: number
+      price:
+        example: 1.04247525e+06
+        type: number
+    type: object
+  lending.WalletTransaction:
+    properties:
+      accountId:
+        example: 1
+        type: integer
+      address:
+        example: 0xa9B6D99bA92D7d691c6EF4f49A1DC909822Cee46
+        type: string
+      chainId:
+        example: 1
+        type: integer
+      collateralType:
+        example: BTC
+        type: string
+      createdDatetime:
+        example: "2021-01-02 12:13:14"
+        type: string
+      id:
+        example: 1
+        type: integer
+      status:
+        example: PENDING
+        type: string
+      txnHash:
+        example: 0xcbeafcd4c82144f7d1f9b94e4ed43e9ed1aa1434feb65a06fed97fee993ba075
+        type: string
+      txnType:
+        example: DEPOSIT
+        type: string
+      updatedDatetime:
+        example: "2021-02-03 12:13:14"
+        type: string
+      volume:
+        example: 0.5
+        type: number
+    type: object
+  mail.OtpMailResponse:
+    properties:
+      expiredTime:
+        example: "2020-01-01 12:12:12"
+        type: string
+      referenceNo:
+        example: "999999"
+        type: string
+    type: object
+  response.ErrResponse:
+    properties:
+      code:
+        example: 400
+        type: integer
+      description:
+        example: Please contact administrator for more information.
+        type: string
+      error:
+        example: '''<Field>'' must be REQUIRED field but the input is '''''
+        type: string
+      title:
+        example: Cannot register public key.
+        type: string
+    type: object
+  response.Response:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        type: object
+      title:
+        example: Register key success.
+        type: string
+    type: object
 host: localhost:9090
 info:
   contact:
     email: k.apiwattanawong@gmail.com
-    name: K.apiwattanawong
+    name: K.Apiwattanawong
     url: http://www.swagger.io/support
-  description: Template api with fiber framework.
+  description: Lending finance for ICFIN company.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: Template Fiber API
+  title: Lending Financial Services
   version: "1.0"
-paths: {}
+paths:
+  /admin/account:
+    get:
+      consumes:
+      - application/json
+      description: get account by account id or email
+      parameters:
+      - description: Account ID
+        in: query
+        name: accountId
+        type: integer
+      - description: Email
+        in: query
+        name: email
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/account.GetAccountAdminResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Get Account Admin
+      tags:
+      - Admin
+  /admin/account/confirm:
+    post:
+      consumes:
+      - application/json
+      description: confirm account by account id
+      parameters:
+      - description: request body to confirm account
+        in: body
+        name: ConfirmAccountAdmin
+        required: true
+        schema:
+          $ref: '#/definitions/account.ConfirmAccountAdminRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Confirm Account Admin
+      tags:
+      - Admin
+  /admin/account/document:
+    put:
+      consumes:
+      - application/json
+      description: update account document by account id and document id
+      parameters:
+      - description: request body to update account document
+        in: body
+        name: UpdateAccountDocumentAdmin
+        required: true
+        schema:
+          $ref: '#/definitions/account.UpdateAccountDocumentAdminRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Update Account document Admin
+      tags:
+      - Admin
+  /admin/account/reject:
+    post:
+      consumes:
+      - application/json
+      description: reject account by account id
+      parameters:
+      - description: request body to reject account
+        in: body
+        name: RejectAccountAdmin
+        required: true
+        schema:
+          $ref: '#/definitions/account.RejectAccountAdminRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Reject Account Admin
+      tags:
+      - Admin
+  /admin/contract:
+    get:
+      consumes:
+      - application/json
+      description: get loan by contract id or account id
+      parameters:
+      - description: Contract ID
+        in: query
+        name: contractId
+        type: string
+      - description: Account ID
+        in: query
+        name: accountId
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/lending.Contract'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Get Loan Admin
+      tags:
+      - Admin
+    post:
+      consumes:
+      - application/json
+      description: confirm loan contract by account id
+      parameters:
+      - description: request body to confirm loan contract
+        in: body
+        name: ConfirmLoanAdmin
+        required: true
+        schema:
+          $ref: '#/definitions/lending.ConfirmLoanAdminRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Confirm Loan Admin
+      tags:
+      - Admin
+  /admin/deposit/confirm:
+    post:
+      consumes:
+      - application/json
+      description: confirm deposit transaction by account id
+      parameters:
+      - description: request body to confirm deposit
+        in: body
+        name: ConfirmDepositAdmin
+        required: true
+        schema:
+          $ref: '#/definitions/lending.ConfirmDepositAdminRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Confirm Deposit Admin
+      tags:
+      - Admin
+  /admin/deposit/reject:
+    post:
+      consumes:
+      - application/json
+      description: reject deposit transaction by account id
+      parameters:
+      - description: request body to reject deposit
+        in: body
+        name: RejectDepositAdmin
+        required: true
+        schema:
+          $ref: '#/definitions/lending.RejectDepositAdminRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Reject Deposit Admin
+      tags:
+      - Admin
+  /admin/repay:
+    get:
+      consumes:
+      - application/json
+      description: get repayment by id, contract id and account id
+      parameters:
+      - description: ID
+        in: query
+        name: id
+        type: integer
+      - description: Contract ID
+        in: query
+        name: contractId
+        type: integer
+      - description: Account ID
+        in: query
+        name: accountId
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/lending.RepayTransaction'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Get Repay Admin
+      tags:
+      - Admin
+  /admin/repay/confirm:
+    post:
+      consumes:
+      - application/json
+      description: confirm repayment by account id
+      parameters:
+      - description: request body to confirm repay
+        in: body
+        name: ConfirmRepayAdmin
+        required: true
+        schema:
+          $ref: '#/definitions/lending.ConfirmRepayAdminRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Confirm Repay Admin
+      tags:
+      - Admin
+  /admin/repay/reject:
+    post:
+      consumes:
+      - application/json
+      description: reject repayment by account id
+      parameters:
+      - description: request body to reject repay
+        in: body
+        name: RejectRepayAdmin
+        required: true
+        schema:
+          $ref: '#/definitions/lending.RejectRepayAdminRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Reject Repay Admin
+      tags:
+      - Admin
+  /admin/wallet-transaction:
+    get:
+      consumes:
+      - application/json
+      description: get wallet transaction by id, account id, address or txn type
+      parameters:
+      - description: Transaction ID
+        in: query
+        name: Id
+        type: integer
+      - description: Account ID
+        in: query
+        name: accountId
+        type: integer
+      - description: Address
+        in: query
+        name: address
+        type: string
+      - description: Transaction Type
+        in: query
+        name: txnType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/lending.WalletTransaction'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Get Wallet Transaction Admin
+      tags:
+      - Admin
+  /admin/withdraw/confirm:
+    post:
+      consumes:
+      - application/json
+      description: confirm withdraw transaction by account id
+      parameters:
+      - description: request body to confirm withdraw
+        in: body
+        name: ConfirmWithdrawAdmin
+        required: true
+        schema:
+          $ref: '#/definitions/lending.ConfirmWithdrawAdminRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Confirm Withdraw Admin
+      tags:
+      - Admin
+  /admin/withdraw/reject:
+    post:
+      consumes:
+      - application/json
+      description: reject withdraw transaction by account id
+      parameters:
+      - description: request body to reject withdraw
+        in: body
+        name: RejectWithdrawAdmin
+        required: true
+        schema:
+          $ref: '#/definitions/lending.RejectWithdrawAdminRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Reject Withdraw Admin
+      tags:
+      - Admin
+  /borrow:
+    post:
+      consumes:
+      - application/json
+      description: borrow loan
+      parameters:
+      - description: reference number.
+        in: header
+        name: ReferenceNo
+        required: true
+        type: string
+      - description: one time password.
+        in: header
+        name: OTP
+        required: true
+        type: string
+      - description: request body to borrow loan
+        in: body
+        name: BorrowLoan
+        required: true
+        schema:
+          $ref: '#/definitions/lending.BorrowLoanRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/lending.BorrowLoanResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Borrow Loan
+      tags:
+      - Lending
+  /contract:
+    get:
+      consumes:
+      - application/json
+      description: get user's loan contract by accountId
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/lending.Contract'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Contract Loan
+      tags:
+      - Lending
+  /credit:
+    get:
+      consumes:
+      - application/json
+      description: get user's credit available by accountId
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/lending.GetCreditAvailableResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Credit Available
+      tags:
+      - Lending
+  /deposit:
+    post:
+      consumes:
+      - application/json
+      description: submit deposit transaction
+      parameters:
+      - description: request body to submit deposit
+        in: body
+        name: SubmitDeposit
+        required: true
+        schema:
+          $ref: '#/definitions/lending.SubmitDepositRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/lending.SubmitDepositResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Submit Deposit
+      tags:
+      - Lending
+  /interest:
+    get:
+      consumes:
+      - application/json
+      description: get all of interest term
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/lending.InterestTerm'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Get Interest Term
+      tags:
+      - Lending
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: login by user & password
+      parameters:
+      - description: request body to login account
+        in: body
+        name: Login
+        required: true
+        schema:
+          $ref: '#/definitions/account.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/account.LoginResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Login
+      tags:
+      - Account
+  /otp:
+    get:
+      consumes:
+      - application/json
+      description: request otp from email
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/mail.OtpMailResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Request OTP Email
+      tags:
+      - Mail
+  /price:
+    get:
+      consumes:
+      - application/json
+      description: get token price, haircut and interest rate
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/lending.GetTokenPriceResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Get Token Price
+      tags:
+      - Lending
+  /repay:
+    get:
+      consumes:
+      - application/json
+      description: get repayment by account id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/lending.RepayTransaction'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Repay
+      tags:
+      - Lending
+    post:
+      consumes:
+      - application/json
+      description: submit repayment
+      parameters:
+      - description: request body to submit repay
+        in: body
+        name: SubmitRepay
+        required: true
+        schema:
+          $ref: '#/definitions/lending.SubmitRepayRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/lending.SubmitRepayResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Submit Repay
+      tags:
+      - Lending
+  /reset:
+    post:
+      consumes:
+      - application/json
+      description: request to reset password
+      parameters:
+      - description: request body to request to reset password
+        in: body
+        name: RequestReset
+        required: true
+        schema:
+          $ref: '#/definitions/account.RequestResetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/account.RequestResetPasswordResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Request Reset Password
+      tags:
+      - Account
+    put:
+      consumes:
+      - application/json
+      description: submit to reset password
+      parameters:
+      - description: reference number.
+        in: header
+        name: ReferenceNo
+        required: true
+        type: string
+      - description: one time password.
+        in: header
+        name: OTP
+        required: true
+        type: string
+      - description: request body to reset password
+        in: body
+        name: ResetPassword
+        required: true
+        schema:
+          $ref: '#/definitions/account.ResetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Invalid OTP
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Reset Password
+      tags:
+      - Account
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: sign up account
+      parameters:
+      - description: request body to sign up account
+        in: body
+        name: SignUp
+        required: true
+        schema:
+          $ref: '#/definitions/account.SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/account.SignUpResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Sign up
+      tags:
+      - Account
+  /terms:
+    get:
+      consumes:
+      - application/json
+      description: get the latest terms & condition's user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/account.TermsCondition'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Terms & Condition
+      tags:
+      - Account
+    post:
+      consumes:
+      - application/json
+      description: user accept new version of terms & condition
+      parameters:
+      - description: request body to accept terms & condition
+        in: body
+        name: AcceptTermsCondition
+        required: true
+        schema:
+          $ref: '#/definitions/account.AcceptTermsConditionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Accept Terms & Condition
+      tags:
+      - Account
+  /verify/email/{ref}:
+    get:
+      consumes:
+      - application/json
+      description: confirm email by verifying reference
+      parameters:
+      - description: reference number
+        in: path
+        name: ref
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Confirm Verify Email
+      tags:
+      - Account
+  /wallet-transaction:
+    get:
+      consumes:
+      - application/json
+      description: get wallet transaction by accountId
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/lending.WalletTransaction'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Wallet Transaction
+      tags:
+      - Lending
+  /withdraw:
+    post:
+      consumes:
+      - application/json
+      description: submit withdraw transaction
+      parameters:
+      - description: reference number.
+        in: header
+        name: ReferenceNo
+        required: true
+        type: string
+      - description: one time password.
+        in: header
+        name: OTP
+        required: true
+        type: string
+      - description: request body to submit withdraw
+        in: body
+        name: SubmitWithdraw
+        required: true
+        schema:
+          $ref: '#/definitions/lending.SubmitWithdrawRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/lending.SubmitWithdrawResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Submit Withdraw
+      tags:
+      - Lending
 schemes:
 - http
 - https
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

@@ -56,6 +56,7 @@ type AccountRepository interface {
 	GetAccountByIDRepo(context.Context, int) (*Account, error)
 	GetAccountRepo(context.Context, map[string]interface{}) (*[]AccountDetail, error)
 	UpdateAccountRepo(context.Context, int, string) (int64, error)
+	UpdateAccountDocumentRepo(context.Context, int, int, string, string) (int64, error)
 	CreateWalletRepo(context.Context, int) error
 	ConfirmVerifyEmailRepo(context.Context, int) (int64, error)
 	GetTermsConditionRepo(context.Context, int) (*TermsCondition, error)

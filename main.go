@@ -5,6 +5,7 @@ import (
 	"lending-engine/account"
 	"lending-engine/blockchain"
 	"lending-engine/client"
+	"lending-engine/docs"
 	"lending-engine/internal/database"
 	"lending-engine/internal/handler"
 	"lending-engine/internal/redis"
@@ -22,8 +23,6 @@ import (
 	"time"
 	_ "time/tzdata"
 
-	_ "lending-engine/docs"
-
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/gofiber/fiber/v2"
@@ -38,18 +37,21 @@ func init() {
 
 var isReady bool
 
-// @title Template Fiber API
+// @title Lending Financial Services
 // @version 1.0
-// @description Template api with fiber framework.
+// @description Lending finance for ICFIN company.
 // @termsOfService http://swagger.io/terms/
-// @contact.name K.apiwattanawong
+// @contact.name K.Apiwattanawong
 // @contact.url http://www.swagger.io/support
 // @contact.email k.apiwattanawong@gmail.com
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 // @host localhost:9090
-// @BasePath /template-api
+// @BasePath /lending-engine
 // @schemes http https
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	timeout := viper.GetDuration("app.timeout")
 
@@ -149,26 +151,30 @@ func main() {
 	baseApi.Get("/interest", handler.Helper(lendingHandler.GetInterestTerm, logger))
 
 	baseApi.Get("/admin/account", handler.Helper(accountHandler.GetAccountAdmin, logger))
-	baseApi.Get("/admin/account/:id", handler.Helper(accountHandler.ConfirmAccountAdmin, logger))
+	baseApi.Post("/admin/account/confirm", handler.Helper(accountHandler.ConfirmAccountAdmin, logger))
+	baseApi.Post("/admin/account/reject", handler.Helper(accountHandler.RejectAccountAdmin, logger))
+	baseApi.Put("/admin/account/document", handler.Helper(accountHandler.UpdateAccountDocumentAdmin, logger))
 
-	baseApi.Get("/admin/wallet/transaction", handler.Helper(lendingHandler.GetWalletTransactionAdmin, logger))
-	baseApi.Get("/admin/deposit/:id", handler.Helper(lendingHandler.ConfirmDepositAdmin, logger))
-	baseApi.Get("/admin/withdraw/:id/:txnHash", handler.Helper(lendingHandler.ConfirmWithdrawAdmin, logger))
+	baseApi.Get("/admin/wallet-transaction", handler.Helper(lendingHandler.GetWalletTransactionAdmin, logger))
+	baseApi.Post("/admin/deposit/confirm", handler.Helper(lendingHandler.ConfirmDepositAdmin, logger))
+	baseApi.Post("/admin/deposit/reject", handler.Helper(lendingHandler.RejectDepositAdmin, logger))
+	baseApi.Post("/admin/withdraw/confirm", handler.Helper(lendingHandler.ConfirmWithdrawAdmin, logger))
+	baseApi.Post("/admin/withdraw/reject", handler.Helper(lendingHandler.RejectWithdrawAdmin, logger))
 
 	baseApi.Get("/admin/contract", handler.Helper(lendingHandler.GetLoanAdmin, logger))
-	baseApi.Get("/admin/contract/:id", handler.Helper(lendingHandler.ConfirmLoanAdmin, logger))
+	baseApi.Post("/admin/contract", handler.Helper(lendingHandler.ConfirmLoanAdmin, logger))
 
 	baseApi.Get("/admin/repay", handler.Helper(lendingHandler.GetRepayAdmin, logger))
-	baseApi.Get("/admin/repay/:id", handler.Helper(lendingHandler.ConfirmRepayAdmin, logger))
+	baseApi.Post("/admin/repay/confirm", handler.Helper(lendingHandler.ConfirmRepayAdmin, logger))
+	baseApi.Post("/admin/repay/reject", handler.Helper(lendingHandler.RejectRepayAdmin, logger))
 
 	baseApi.Use(middle.AuthorizeTokenMiddleware())
 
 	baseApi.Get("/terms", handler.Helper(accountHandler.GetTermsCondition, logger))
-	baseApi.Get("/terms/:version", handler.Helper(accountHandler.AcceptTermsCondition, logger))
+	baseApi.Post("/terms", handler.Helper(accountHandler.AcceptTermsCondition, logger))
 
-	baseApi.Get("/wallet/transaction", handler.Helper(lendingHandler.GetWalletTransaction, logger))
+	baseApi.Get("/wallet-transaction", handler.Helper(lendingHandler.GetWalletTransaction, logger))
 	baseApi.Post("/deposit", handler.Helper(lendingHandler.SubmitDeposit, logger))
-	baseApi.Post("/withdraw", handler.Helper(lendingHandler.SubmitWithdraw, logger))
 
 	baseApi.Get("/credit", handler.Helper(lendingHandler.GetCreditAvailable, logger))
 	baseApi.Get("/contract", handler.Helper(lendingHandler.GetLoan, logger))
@@ -181,6 +187,7 @@ func main() {
 	baseApi.Use(middle.VerifyOTPMiddleware())
 
 	baseApi.Post("/borrow", handler.Helper(lendingHandler.BorrowLoan, logger))
+	baseApi.Post("/withdraw", handler.Helper(lendingHandler.SubmitWithdraw, logger))
 
 	app.Get("/version", version.VersionHandler)
 	app.Get("/liveness", func(c *fiber.Ctx) error { return c.SendStatus(fiber.StatusOK) })
@@ -287,4 +294,6 @@ func registerSwaggerRoute(swag fiber.Router) {
 		URL:         fmt.Sprintf("http://%s/swagger/doc.json", viper.GetString("swagger.host")),
 		DeepLinking: false,
 	}))
+	docs.SwaggerInfo.Host = viper.GetString("swagger.host")
+	docs.SwaggerInfo.BasePath = viper.GetString("app.context")
 }

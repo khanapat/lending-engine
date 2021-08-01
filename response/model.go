@@ -10,7 +10,7 @@ type ErrResponse struct {
 	Code        uint64 `json:"code" example:"400"`
 	Title       string `json:"title" example:"Cannot register public key."`
 	Description string `json:"description" example:"Please contact administrator for more information."`
-	Error       string `json:"error,omitempty"`
+	Error       string `json:"error,omitempty" example:"'<Field>' must be REQUIRED field but the input is ''"`
 }
 
 func NewResponse(resp Response, data interface{}) *Response {

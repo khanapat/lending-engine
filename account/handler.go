@@ -43,6 +43,17 @@ func NewAccountHandler(accountRepository AccountRepository, requestVerifyEmailCl
 	}
 }
 
+// SignUp
+// @Summary Sign up
+// @Description sign up account
+// @Tags Account
+// @Accept json
+// @Produce json
+// @Param SignUp body account.SignUpRequest true "request body to sign up account"
+// @Success 200 {object} response.Response{data=account.SignUpResponse} "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Router /signup [post]
 func (s *accountHandler) SignUp(c *handler.Ctx) error {
 	var req SignUpRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -79,7 +90,7 @@ func (s *accountHandler) SignUp(c *handler.Ctx) error {
 		Subject:  "Verify your email address to finish signing up for ICFin.finance",
 		Template: viper.GetString("client.email-api.verify-emil-template"),
 		Body: BodySendVerifyEmailClient{
-			Link: strings.Replace(viper.GetString("client.email-api.link"), "{ref}", ref, 1),
+			Link: strings.Replace(viper.GetString("client.email-api.verification.link"), "{ref}", ref, 1),
 		},
 		Auth: true,
 	}
@@ -92,9 +103,23 @@ func (s *accountHandler) SignUp(c *handler.Ctx) error {
 	}
 	c.Log().Info(fmt.Sprintf("Verify your email with ref: %s", ref))
 
-	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).SignUpAccountSuccess, id))
+	signUpResponse := SignUpResponse{
+		AccountID: id,
+	}
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).SignUpAccountSuccess, &signUpResponse))
 }
 
+// ConfirmVerifyEmail
+// @Summary Confirm Verify Email
+// @Description confirm email by verifying reference
+// @Tags Account
+// @Accept json
+// @Produce json
+// @Param ref path string true "reference number"
+// @Success 200 {object} response.Response "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Router /verify/email/{ref} [get]
 func (s *accountHandler) ConfirmVerifyEmail(c *handler.Ctx) error {
 	req := c.Params("ref")
 
@@ -117,6 +142,18 @@ func (s *accountHandler) ConfirmVerifyEmail(c *handler.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).ConfirmVerifyEmailSuccess, nil))
 }
 
+// GetAccountAdmin
+// @Summary Get Account Admin
+// @Description get account by account id or email
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param accountId query int false "Account ID"
+// @Param email query string false "Email"
+// @Success 200 {object} response.Response{data=account.GetAccountAdminResponse} "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Router /admin/account [get]
 func (s *accountHandler) GetAccountAdmin(c *handler.Ctx) error {
 	var req GetAccountAdminRequest
 	if err := c.QueryParser(&req); err != nil {
@@ -134,8 +171,10 @@ func (s *accountHandler) GetAccountAdmin(c *handler.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
 
-	var documents []Document
-	for _, value := range *lists {
+	var count int
+	// var getAccountAdminResponses []GetAccountAdminResponse // return nil
+	getAccountAdminResponses := make([]GetAccountAdminResponse, 0) // return []
+	for index, value := range *lists {
 		document := Document{
 			DocumentID:   *value.DocumentID,
 			DocumentType: *value.DocumentType,
@@ -143,52 +182,157 @@ func (s *accountHandler) GetAccountAdmin(c *handler.Ctx) error {
 			FileContext:  *value.FileContext,
 			Tag:          *value.Tag,
 		}
-		documents = append(documents, document)
+		if index != 0 {
+			if *value.AccountID == getAccountAdminResponses[count].AccountID {
+				getAccountAdminResponses[count].Document = append(getAccountAdminResponses[count].Document, document)
+				continue
+			} else {
+				count++
+			}
+		}
+		getAccountAdminResponse := GetAccountAdminResponse{
+			AccountID:     *(*lists)[index].AccountID,
+			FirstName:     *(*lists)[index].FirstName,
+			LastName:      *(*lists)[index].LastName,
+			Phone:         *(*lists)[index].Phone,
+			Password:      *(*lists)[index].Password,
+			AccountNumber: *(*lists)[index].AccountNumber,
+			IsVerify:      *(*lists)[index].IsVerify,
+			Status:        *(*lists)[index].Status,
+			TermCondition: *(*lists)[index].CurrentAcceptVersion,
+			Document:      []Document{document},
+		}
+		getAccountAdminResponses = append(getAccountAdminResponses, getAccountAdminResponse)
 	}
-
-	getAccountAdminResponse := GetAccountAdminResponse{
-		AccountID:     *(*lists)[0].AccountID,
-		FirstName:     *(*lists)[0].FirstName,
-		LastName:      *(*lists)[0].LastName,
-		Phone:         *(*lists)[0].Phone,
-		Password:      *(*lists)[0].Password,
-		AccountNumber: *(*lists)[0].AccountNumber,
-		IsVerify:      *(*lists)[0].IsVerify,
-		Status:        *(*lists)[0].Status,
-		TermCondition: *(*lists)[0].CurrentAcceptVersion,
-		Document:      documents,
-	}
-	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetAccountAdminSuccess, &getAccountAdminResponse))
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetAccountAdminSuccess, &getAccountAdminResponses))
 }
 
+// ConfirmAccountAdmin
+// @Summary Confirm Account Admin
+// @Description confirm account by account id
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param ConfirmAccountAdmin body account.ConfirmAccountAdminRequest true "request body to confirm account"
+// @Success 200 {object} response.Response "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Router /admin/account/confirm [post]
 func (s *accountHandler) ConfirmAccountAdmin(c *handler.Ctx) error {
-	id, err := c.ParamsInt("id")
-	if err != nil {
+	var req ConfirmAccountAdminRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmAccountAdminRequest, err.Error()))
+	}
+	if err := req.validate(); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmAccountAdminRequest, err.Error()))
 	}
 
-	account, err := s.AccountRepository.GetAccountByIDRepo(c.Context(), id)
+	account, err := s.AccountRepository.GetAccountByIDRepo(c.Context(), req.AccountID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
 	if account == nil {
 		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmAccountAdminRequest, "ID doesn't exist."))
 	}
-	if *account.Status != common.PendingStatus {
-		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, "This id has already confirmed."))
+	if *account.Status == common.ConfirmStatus {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).ConfirmAccountAdminRequest, "This id has already confirmed."))
 	}
 
-	accountRows, err := s.AccountRepository.UpdateAccountRepo(c.Context(), id, common.ConfirmStatus)
+	accountRows, err := s.AccountRepository.UpdateAccountRepo(c.Context(), req.AccountID, common.ConfirmStatus)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
 	if accountRows != 1 {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, fmt.Sprintf("expected to affect 1 row, affected %d", accountRows)))
 	}
-	c.Log().Info(fmt.Sprintf("AccountID: %d | Status: %s", id, *account.Status))
+	c.Log().Info(fmt.Sprintf("AccountID: %d - Status: %s", req.AccountID, common.ConfirmStatus))
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).ConfirmAccountAdminSuccess, nil))
 }
 
+// RejectAccountAdmin
+// @Summary Reject Account Admin
+// @Description reject account by account id
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param RejectAccountAdmin body account.RejectAccountAdminRequest true "request body to reject account"
+// @Success 200 {object} response.Response "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Router /admin/account/reject [post]
+func (s *accountHandler) RejectAccountAdmin(c *handler.Ctx) error {
+	var req RejectAccountAdminRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).RejectAccountAdminRequest, err.Error()))
+	}
+	if err := req.validate(); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).RejectAccountAdminRequest, err.Error()))
+	}
+
+	account, err := s.AccountRepository.GetAccountByIDRepo(c.Context(), req.AccountID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if account == nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).RejectAccountAdminRequest, "ID doesn't exist."))
+	}
+	if *account.Status == common.RejectStatus {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).RejectAccountAdminRequest, "This id has already rejected."))
+	}
+
+	accountRows, err := s.AccountRepository.UpdateAccountRepo(c.Context(), req.AccountID, common.RejectStatus)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if accountRows != 1 {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, fmt.Sprintf("expected to affect 1 row, affected %d", accountRows)))
+	}
+	c.Log().Info(fmt.Sprintf("AccountID: %d - Status: %s", req.AccountID, common.RejectStatus))
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).RejectAccountAdminSuccess, nil))
+}
+
+// UpdateAccountDocumentAdmin
+// @Summary Update Account document Admin
+// @Description update account document by account id and document id
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param UpdateAccountDocumentAdmin body account.UpdateAccountDocumentAdminRequest true "request body to update account document"
+// @Success 200 {object} response.Response "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Router /admin/account/document [put]
+func (s *accountHandler) UpdateAccountDocumentAdmin(c *handler.Ctx) error {
+	var req UpdateAccountDocumentAdminRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).UpdateAccountDocumentAdminRequest, err.Error()))
+	}
+	if err := req.validate(); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).UpdateAccountDocumentAdminRequest, err.Error()))
+	}
+
+	docRows, err := s.AccountRepository.UpdateAccountDocumentRepo(c.Context(), req.AccountID, req.DocumentID, req.FileName, req.FileContext)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if docRows != 1 {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, fmt.Sprintf("expected to affect 1 row, affected %d", docRows)))
+	}
+	c.Log().Info(fmt.Sprintf("AccountID: %d - DocumentID: %d - FileName: %s", req.AccountID, req.DocumentID, req.FileName))
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).UpdateAccountDocumentAdminSuccess, nil))
+}
+
+// GetTermsCondition
+// @Summary Get Terms & Condition
+// @Description get the latest terms & condition's user
+// @Tags Account
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response{data=account.TermsCondition} "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Security ApiKeyAuth
+// @Router /terms [get]
 func (s *accountHandler) GetTermsCondition(c *handler.Ctx) error {
 	bearer := c.Locals(common.JWTClaimsKey).(*jwt.Token)
 	claims := bearer.Claims.(jwt.MapClaims)
@@ -201,14 +345,32 @@ func (s *accountHandler) GetTermsCondition(c *handler.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetTermsConditionSuccess, &term))
 }
 
+// AcceptTermsCondition
+// @Summary Accept Terms & Condition
+// @Description user accept new version of terms & condition
+// @Tags Account
+// @Accept json
+// @Produce json
+// @Param AcceptTermsCondition body account.AcceptTermsConditionRequest true "request body to accept terms & condition"
+// @Success 200 {object} response.Response "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Security ApiKeyAuth
+// @Router /terms [post]
 func (s *accountHandler) AcceptTermsCondition(c *handler.Ctx) error {
 	bearer := c.Locals(common.JWTClaimsKey).(*jwt.Token)
 	claims := bearer.Claims.(jwt.MapClaims)
 	id := claims["accountId"].(float64)
 
-	version := c.Params("version")
+	var req AcceptTermsConditionRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).AcceptTermsConditionRequest, err.Error()))
+	}
+	if err := req.validate(); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).AcceptTermsConditionRequest, err.Error()))
+	}
 
-	affect, err := s.AccountRepository.AcceptTermsConditionRepo(c.Context(), int(id), version)
+	affect, err := s.AccountRepository.AcceptTermsConditionRepo(c.Context(), int(id), req.Version)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
@@ -219,6 +381,17 @@ func (s *accountHandler) AcceptTermsCondition(c *handler.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).AcceptTermsConditionSuccess, nil))
 }
 
+// Login
+// @Summary Login
+// @Description login by user & password
+// @Tags Account
+// @Accept json
+// @Produce json
+// @Param Login body account.LoginRequest true "request body to login account"
+// @Success 200 {object} response.Response{data=account.LoginResponse} "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Router /login [post]
 func (s *accountHandler) Login(c *handler.Ctx) error {
 	var req LoginRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -254,6 +427,17 @@ func (s *accountHandler) Login(c *handler.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).SignUpAccountSuccess, &loginResponse))
 }
 
+// RequestResetPassword
+// @Summary Request Reset Password
+// @Description request to reset password
+// @Tags Account
+// @Accept json
+// @Produce json
+// @Param RequestReset body account.RequestResetPasswordRequest true "request body to request to reset password"
+// @Success 200 {object} response.Response{data=account.RequestResetPasswordResponse} "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Router /reset [post]
 func (s *accountHandler) RequestResetPassword(c *handler.Ctx) error {
 	var req RequestResetPasswordRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -306,6 +490,20 @@ func (s *accountHandler) RequestResetPassword(c *handler.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).RequestResetPasswordSuccess, &requestResetPasswordResponse))
 }
 
+// ResetPassword
+// @Summary Reset Password
+// @Description submit to reset password
+// @Tags Account
+// @Accept json
+// @Produce json
+// @Param ReferenceNo header string true "reference number."
+// @Param OTP header string true "one time password."
+// @Param ResetPassword body account.ResetPasswordRequest true "request body to reset password"
+// @Success 200 {object} response.Response "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 400 {object} response.ErrResponse "Invalid OTP"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Router /reset [put]
 func (s *accountHandler) ResetPassword(c *handler.Ctx) error {
 	refNo := string(c.Request().Header.Peek(common.ReferenceOTPKey))
 	otp := string(c.Request().Header.Peek(common.OTPKey))

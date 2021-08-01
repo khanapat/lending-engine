@@ -297,7 +297,7 @@ func (r lendingRepositoryDB) UpdateContractRepo(ctx context.Context, contractId 
 }
 
 func (r lendingRepositoryDB) QueryInterestTermRepo(ctx context.Context) (*[]InterestTerm, error) {
-	var interestTerms []InterestTerm
+	interestTerms := make([]InterestTerm, 0)
 	err := r.db.SelectContext(ctx, &interestTerms, `
 		SELECT interest_code, interest_rate
 		FROM lending.public.interest_term

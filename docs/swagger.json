@@ -5,11 +5,11 @@
     ],
     "swagger": "2.0",
     "info": {
-        "description": "Template api with fiber framework.",
-        "title": "Template Fiber API",
+        "description": "Lending finance for ICFIN company.",
+        "title": "Lending Financial Services",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
-            "name": "K.apiwattanawong",
+            "name": "K.Apiwattanawong",
             "url": "http://www.swagger.io/support",
             "email": "k.apiwattanawong@gmail.com"
         },
@@ -20,6 +20,2427 @@
         "version": "1.0"
     },
     "host": "localhost:9090",
-    "basePath": "/template-api",
-    "paths": {}
+    "basePath": "/lending-engine",
+    "paths": {
+        "/admin/account": {
+            "get": {
+                "description": "get account by account id or email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get Account Admin",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "accountId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Email",
+                        "name": "email",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/account.GetAccountAdminResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/account/confirm": {
+            "post": {
+                "description": "confirm account by account id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Confirm Account Admin",
+                "parameters": [
+                    {
+                        "description": "request body to confirm account",
+                        "name": "ConfirmAccountAdmin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.ConfirmAccountAdminRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/account/document": {
+            "put": {
+                "description": "update account document by account id and document id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update Account document Admin",
+                "parameters": [
+                    {
+                        "description": "request body to update account document",
+                        "name": "UpdateAccountDocumentAdmin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.UpdateAccountDocumentAdminRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/account/reject": {
+            "post": {
+                "description": "reject account by account id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Reject Account Admin",
+                "parameters": [
+                    {
+                        "description": "request body to reject account",
+                        "name": "RejectAccountAdmin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.RejectAccountAdminRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/contract": {
+            "get": {
+                "description": "get loan by contract id or account id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get Loan Admin",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Contract ID",
+                        "name": "contractId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "accountId",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/lending.Contract"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "confirm loan contract by account id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Confirm Loan Admin",
+                "parameters": [
+                    {
+                        "description": "request body to confirm loan contract",
+                        "name": "ConfirmLoanAdmin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/lending.ConfirmLoanAdminRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/deposit/confirm": {
+            "post": {
+                "description": "confirm deposit transaction by account id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Confirm Deposit Admin",
+                "parameters": [
+                    {
+                        "description": "request body to confirm deposit",
+                        "name": "ConfirmDepositAdmin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/lending.ConfirmDepositAdminRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/deposit/reject": {
+            "post": {
+                "description": "reject deposit transaction by account id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Reject Deposit Admin",
+                "parameters": [
+                    {
+                        "description": "request body to reject deposit",
+                        "name": "RejectDepositAdmin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/lending.RejectDepositAdminRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/repay": {
+            "get": {
+                "description": "get repayment by id, contract id and account id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get Repay Admin",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Contract ID",
+                        "name": "contractId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "accountId",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/lending.RepayTransaction"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/repay/confirm": {
+            "post": {
+                "description": "confirm repayment by account id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Confirm Repay Admin",
+                "parameters": [
+                    {
+                        "description": "request body to confirm repay",
+                        "name": "ConfirmRepayAdmin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/lending.ConfirmRepayAdminRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/repay/reject": {
+            "post": {
+                "description": "reject repayment by account id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Reject Repay Admin",
+                "parameters": [
+                    {
+                        "description": "request body to reject repay",
+                        "name": "RejectRepayAdmin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/lending.RejectRepayAdminRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/wallet-transaction": {
+            "get": {
+                "description": "get wallet transaction by id, account id, address or txn type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get Wallet Transaction Admin",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Transaction ID",
+                        "name": "Id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "accountId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Address",
+                        "name": "address",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Transaction Type",
+                        "name": "txnType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/lending.WalletTransaction"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/withdraw/confirm": {
+            "post": {
+                "description": "confirm withdraw transaction by account id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Confirm Withdraw Admin",
+                "parameters": [
+                    {
+                        "description": "request body to confirm withdraw",
+                        "name": "ConfirmWithdrawAdmin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/lending.ConfirmWithdrawAdminRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/withdraw/reject": {
+            "post": {
+                "description": "reject withdraw transaction by account id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Reject Withdraw Admin",
+                "parameters": [
+                    {
+                        "description": "request body to reject withdraw",
+                        "name": "RejectWithdrawAdmin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/lending.RejectWithdrawAdminRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/borrow": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "borrow loan",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lending"
+                ],
+                "summary": "Borrow Loan",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "reference number.",
+                        "name": "ReferenceNo",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "one time password.",
+                        "name": "OTP",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "request body to borrow loan",
+                        "name": "BorrowLoan",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/lending.BorrowLoanRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/lending.BorrowLoanResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/contract": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "get user's loan contract by accountId",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lending"
+                ],
+                "summary": "Get Contract Loan",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/lending.Contract"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/credit": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "get user's credit available by accountId",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lending"
+                ],
+                "summary": "Get Credit Available",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/lending.GetCreditAvailableResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/deposit": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "submit deposit transaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lending"
+                ],
+                "summary": "Submit Deposit",
+                "parameters": [
+                    {
+                        "description": "request body to submit deposit",
+                        "name": "SubmitDeposit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/lending.SubmitDepositRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/lending.SubmitDepositResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/interest": {
+            "get": {
+                "description": "get all of interest term",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lending"
+                ],
+                "summary": "Get Interest Term",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/lending.InterestTerm"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "login by user \u0026 password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "request body to login account",
+                        "name": "Login",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/account.LoginResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/otp": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "request otp from email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mail"
+                ],
+                "summary": "Request OTP Email",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/mail.OtpMailResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/price": {
+            "get": {
+                "description": "get token price, haircut and interest rate",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lending"
+                ],
+                "summary": "Get Token Price",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/lending.GetTokenPriceResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/repay": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "get repayment by account id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lending"
+                ],
+                "summary": "Get Repay",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/lending.RepayTransaction"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "submit repayment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lending"
+                ],
+                "summary": "Submit Repay",
+                "parameters": [
+                    {
+                        "description": "request body to submit repay",
+                        "name": "SubmitRepay",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/lending.SubmitRepayRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/lending.SubmitRepayResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/reset": {
+            "put": {
+                "description": "submit to reset password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Reset Password",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "reference number.",
+                        "name": "ReferenceNo",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "one time password.",
+                        "name": "OTP",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "request body to reset password",
+                        "name": "ResetPassword",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.ResetPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid OTP",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "request to reset password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Request Reset Password",
+                "parameters": [
+                    {
+                        "description": "request body to request to reset password",
+                        "name": "RequestReset",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.RequestResetPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/account.RequestResetPasswordResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/signup": {
+            "post": {
+                "description": "sign up account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Sign up",
+                "parameters": [
+                    {
+                        "description": "request body to sign up account",
+                        "name": "SignUp",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.SignUpRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/account.SignUpResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/terms": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "get the latest terms \u0026 condition's user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Get Terms \u0026 Condition",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/account.TermsCondition"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "user accept new version of terms \u0026 condition",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Accept Terms \u0026 Condition",
+                "parameters": [
+                    {
+                        "description": "request body to accept terms \u0026 condition",
+                        "name": "AcceptTermsCondition",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.AcceptTermsConditionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/verify/email/{ref}": {
+            "get": {
+                "description": "confirm email by verifying reference",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Confirm Verify Email",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "reference number",
+                        "name": "ref",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallet-transaction": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "get wallet transaction by accountId",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lending"
+                ],
+                "summary": "Get Wallet Transaction",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/lending.WalletTransaction"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/withdraw": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "submit withdraw transaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lending"
+                ],
+                "summary": "Submit Withdraw",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "reference number.",
+                        "name": "ReferenceNo",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "one time password.",
+                        "name": "OTP",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "request body to submit withdraw",
+                        "name": "SubmitWithdraw",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/lending.SubmitWithdrawRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/lending.SubmitWithdrawResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "account.AcceptTermsConditionRequest": {
+            "type": "object",
+            "properties": {
+                "version": {
+                    "type": "string",
+                    "example": "1.0.0"
+                }
+            }
+        },
+        "account.ConfirmAccountAdminRequest": {
+            "type": "object",
+            "properties": {
+                "accountId": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "account.Document": {
+            "type": "object",
+            "properties": {
+                "documentId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "documentType": {
+                    "type": "string",
+                    "example": "CITIZEN ID"
+                },
+                "fileContext": {
+                    "type": "string",
+                    "example": "\u003cBase64\u003e"
+                },
+                "fileName": {
+                    "type": "string",
+                    "example": "cid.pdf"
+                },
+                "tag": {
+                    "type": "string",
+                    "example": "id"
+                }
+            }
+        },
+        "account.GetAccountAdminResponse": {
+            "type": "object",
+            "properties": {
+                "accountId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "accountNumber": {
+                    "type": "string",
+                    "example": "11111111"
+                },
+                "document": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/account.Document"
+                    }
+                },
+                "email": {
+                    "type": "string",
+                    "example": "k.apiwattanawong@gmail.com"
+                },
+                "firstName": {
+                    "type": "string",
+                    "example": "Khanapat"
+                },
+                "isVerify": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "lastName": {
+                    "type": "string",
+                    "example": "Apiwattanawong"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "\u003cbcrypt\u003e"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "0811111111"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "PENDING"
+                },
+                "termCondition": {
+                    "type": "string",
+                    "example": "1.0.0"
+                }
+            }
+        },
+        "account.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "k.apiwattanawong@gmail.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "password"
+                }
+            }
+        },
+        "account.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDk2ODI2MzYsImlzcyI6ImFkbWluIn0.7MuvPeUSTlSvto45t3pqM5j7ZDxAVJnlBbEzq9ZJT0k"
+                }
+            }
+        },
+        "account.RejectAccountAdminRequest": {
+            "type": "object",
+            "properties": {
+                "accountId": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "account.RequestResetPasswordRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "k.apiwattanawong@gmail.com"
+                }
+            }
+        },
+        "account.RequestResetPasswordResponse": {
+            "type": "object",
+            "properties": {
+                "expiredTime": {
+                    "type": "string",
+                    "example": "2021-01-02 12:13:14"
+                },
+                "referenceNo": {
+                    "type": "string",
+                    "example": "XXXXXX"
+                }
+            }
+        },
+        "account.ResetPasswordRequest": {
+            "type": "object",
+            "properties": {
+                "newPassword": {
+                    "type": "string",
+                    "example": "BOBO"
+                }
+            }
+        },
+        "account.SignUpRequest": {
+            "type": "object",
+            "properties": {
+                "accountNumber": {
+                    "type": "string",
+                    "example": "000000000"
+                },
+                "bookBankLedger": {
+                    "type": "string",
+                    "example": "\u003cBase64\u003e"
+                },
+                "bookBankName": {
+                    "type": "string",
+                    "example": "book.jpg"
+                },
+                "citizenCard": {
+                    "type": "string",
+                    "example": "\u003cBase64\u003e"
+                },
+                "citizenName": {
+                    "type": "string",
+                    "example": "identity.jpg"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "k.apiwattanawong@gmail.com"
+                },
+                "firstName": {
+                    "type": "string",
+                    "example": "Frank"
+                },
+                "lastName": {
+                    "type": "string",
+                    "example": "Style"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "bobo"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "0812345678"
+                }
+            }
+        },
+        "account.SignUpResponse": {
+            "type": "object",
+            "properties": {
+                "accountId": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "account.TermsCondition": {
+            "type": "object",
+            "properties": {
+                "accountId": {
+                    "type": "integer"
+                },
+                "currentAcceptVersion": {
+                    "type": "string"
+                }
+            }
+        },
+        "account.UpdateAccountDocumentAdminRequest": {
+            "type": "object",
+            "properties": {
+                "accountId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "documentId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "fileContext": {
+                    "type": "string",
+                    "example": "\u003cBase64\u003e"
+                },
+                "fileName": {
+                    "type": "string",
+                    "example": "ID.jpg"
+                }
+            }
+        },
+        "lending.BorrowLoanRequest": {
+            "type": "object",
+            "properties": {
+                "interestCode": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "loan": {
+                    "type": "number",
+                    "example": 1000
+                },
+                "term": {
+                    "type": "integer",
+                    "example": 12
+                }
+            }
+        },
+        "lending.BorrowLoanResponse": {
+            "type": "object",
+            "properties": {
+                "contractId": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "lending.ConfirmDepositAdminRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "lending.ConfirmLoanAdminRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "lending.ConfirmRepayAdminRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "lending.ConfirmWithdrawAdminRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "txnHash": {
+                    "type": "string",
+                    "example": "0xC26880A0AF2EA0c7E8130e6EC47Af756465452E8"
+                }
+            }
+        },
+        "lending.Contract": {
+            "type": "object",
+            "properties": {
+                "accountId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "contractId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "createdDatetime": {
+                    "type": "string",
+                    "example": "2021-01-02 12:13:14"
+                },
+                "interestCode": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "loanOutstanding": {
+                    "type": "number",
+                    "example": 20000
+                },
+                "status": {
+                    "type": "string",
+                    "example": "CLOSED"
+                },
+                "term": {
+                    "type": "integer",
+                    "example": 12
+                },
+                "updatedDatetime": {
+                    "type": "string",
+                    "example": "2021-02-03 12:13:14"
+                }
+            }
+        },
+        "lending.GetCreditAvailableResponse": {
+            "type": "object",
+            "properties": {
+                "btcVolume": {
+                    "type": "number",
+                    "example": 0.1
+                },
+                "collateralValue": {
+                    "type": "number",
+                    "example": 10000
+                },
+                "creditAvailable": {
+                    "type": "number",
+                    "example": 10000
+                },
+                "ethVolume": {
+                    "type": "number",
+                    "example": 0.1
+                },
+                "loanOutstanding": {
+                    "type": "number",
+                    "example": 0
+                }
+            }
+        },
+        "lending.GetTokenPriceResponse": {
+            "type": "object",
+            "properties": {
+                "btc": {
+                    "$ref": "#/definitions/lending.TokenPrice"
+                },
+                "eth": {
+                    "$ref": "#/definitions/lending.TokenPrice"
+                },
+                "interestRate": {
+                    "type": "number",
+                    "example": 0.05
+                }
+            }
+        },
+        "lending.InterestTerm": {
+            "type": "object",
+            "properties": {
+                "interestCode": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "interestRate": {
+                    "type": "number",
+                    "example": 0.05
+                }
+            }
+        },
+        "lending.RejectDepositAdminRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "lending.RejectRepayAdminRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "lending.RejectWithdrawAdminRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "lending.RepayTransaction": {
+            "type": "object",
+            "properties": {
+                "accountId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "amount": {
+                    "type": "number",
+                    "example": 1000
+                },
+                "contractId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "createdDatetime": {
+                    "type": "string",
+                    "example": "2021-01-02 12:13:14"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "slip": {
+                    "type": "string",
+                    "example": "\u003cBase64\u003e"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "CONFIRMED"
+                },
+                "updatedDatetime": {
+                    "type": "string",
+                    "example": "2021-02-03 12:13:14"
+                }
+            }
+        },
+        "lending.SubmitDepositRequest": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string",
+                    "example": "0xc083EB69aa7215f4AFa7a22dcbfCC1a33999371C"
+                },
+                "chainId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "collateralType": {
+                    "type": "string",
+                    "example": "BTC"
+                },
+                "txnHash": {
+                    "type": "string",
+                    "example": "0xf5a3aa87c40b05e6a308b61186eeded8996b654a9895401b8089a2966b54f618"
+                },
+                "volume": {
+                    "type": "number",
+                    "example": 0.5
+                }
+            }
+        },
+        "lending.SubmitDepositResponse": {
+            "type": "object",
+            "properties": {
+                "depositId": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "lending.SubmitRepayRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer",
+                    "example": 1000
+                },
+                "contractId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "slip": {
+                    "type": "string",
+                    "example": "\u003cBase64\u003e"
+                }
+            }
+        },
+        "lending.SubmitRepayResponse": {
+            "type": "object",
+            "properties": {
+                "repayId": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "lending.SubmitWithdrawRequest": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string",
+                    "example": "0xc083EB69aa7215f4AFa7a22dcbfCC1a33999371C"
+                },
+                "chainId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "collateralType": {
+                    "type": "string",
+                    "example": "BTC"
+                },
+                "volume": {
+                    "type": "number",
+                    "example": 0.5
+                }
+            }
+        },
+        "lending.SubmitWithdrawResponse": {
+            "type": "object",
+            "properties": {
+                "withdrawId": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "lending.TokenPrice": {
+            "type": "object",
+            "properties": {
+                "haircut": {
+                    "type": "number",
+                    "example": 0.5
+                },
+                "price": {
+                    "type": "number",
+                    "example": 1042475.25
+                }
+            }
+        },
+        "lending.WalletTransaction": {
+            "type": "object",
+            "properties": {
+                "accountId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "address": {
+                    "type": "string",
+                    "example": "0xa9B6D99bA92D7d691c6EF4f49A1DC909822Cee46"
+                },
+                "chainId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "collateralType": {
+                    "type": "string",
+                    "example": "BTC"
+                },
+                "createdDatetime": {
+                    "type": "string",
+                    "example": "2021-01-02 12:13:14"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "status": {
+                    "type": "string",
+                    "example": "PENDING"
+                },
+                "txnHash": {
+                    "type": "string",
+                    "example": "0xcbeafcd4c82144f7d1f9b94e4ed43e9ed1aa1434feb65a06fed97fee993ba075"
+                },
+                "txnType": {
+                    "type": "string",
+                    "example": "DEPOSIT"
+                },
+                "updatedDatetime": {
+                    "type": "string",
+                    "example": "2021-02-03 12:13:14"
+                },
+                "volume": {
+                    "type": "number",
+                    "example": 0.5
+                }
+            }
+        },
+        "mail.OtpMailResponse": {
+            "type": "object",
+            "properties": {
+                "expiredTime": {
+                    "type": "string",
+                    "example": "2020-01-01 12:12:12"
+                },
+                "referenceNo": {
+                    "type": "string",
+                    "example": "999999"
+                }
+            }
+        },
+        "response.ErrResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Please contact administrator for more information."
+                },
+                "error": {
+                    "type": "string",
+                    "example": "'\u003cField\u003e' must be REQUIRED field but the input is ''"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Cannot register public key."
+                }
+            }
+        },
+        "response.Response": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "data": {
+                    "type": "object"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Register key success."
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
 }

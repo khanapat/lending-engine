@@ -73,12 +73,57 @@ type GetWalletTransactionAdminRequest struct {
 	ID        *int    `json:"id" example:"1"`
 	AccountID *int    `json:"accountId" example:"4"`
 	Address   *string `json:"address" example:"0xc083EB69aa7215f4AFa7a22dcbfCC1a33999371C"`
-	TxnType   string  `json:"txnType" example:"DEPOSIT"`
+	TxnType   *string `json:"txnType" example:"DEPOSIT"`
 }
 
-func (req *GetWalletTransactionAdminRequest) validate() error {
-	if utf8.RuneCountInString(req.TxnType) == 0 {
-		return errors.Wrapf(errors.New(fmt.Sprintf("'txnType' must be REQUIRED field but the input is '%v'.", req.TxnType)), response.ValidateFieldError)
+// confirm deposit admin
+type ConfirmDepositAdminRequest struct {
+	ID int `json:"id" example:"1"`
+}
+
+func (req *ConfirmDepositAdminRequest) validate() error {
+	if req.ID == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'id' must be REQUIRED field but the input is '%v'.", req.ID)), response.ValidateFieldError)
+	}
+	return nil
+}
+
+// reject deposit admin
+type RejectDepositAdminRequest struct {
+	ID int `json:"id" example:"1"`
+}
+
+func (req *RejectDepositAdminRequest) validate() error {
+	if req.ID == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'id' must be REQUIRED field but the input is '%v'.", req.ID)), response.ValidateFieldError)
+	}
+	return nil
+}
+
+// confirm withdraw admin
+type ConfirmWithdrawAdminRequest struct {
+	ID      int    `json:"id" example:"1"`
+	TxnHash string `json:"txnHash" example:"0xC26880A0AF2EA0c7E8130e6EC47Af756465452E8"`
+}
+
+func (req *ConfirmWithdrawAdminRequest) validate() error {
+	if req.ID == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'id' must be REQUIRED field but the input is '%v'.", req.ID)), response.ValidateFieldError)
+	}
+	if utf8.RuneCountInString(req.TxnHash) == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'txnHash' must be REQUIRED field but the input is '%v'.", req.TxnHash)), response.ValidateFieldError)
+	}
+	return nil
+}
+
+// reject withdraw admin
+type RejectWithdrawAdminRequest struct {
+	ID int `json:"id" example:"1"`
+}
+
+func (req *RejectWithdrawAdminRequest) validate() error {
+	if req.ID == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'id' must be REQUIRED field but the input is '%v'.", req.ID)), response.ValidateFieldError)
 	}
 	return nil
 }
@@ -116,9 +161,22 @@ type BorrowLoanResponse struct {
 	ContractID int64 `json:"contractId" example:"1"`
 }
 
+// get loan admin
 type GetLoanAdminRequest struct {
 	ContractID *int `json:"contractId" example:"1"`
 	AccountID  *int `json:"accountId" example:"1"`
+}
+
+// confirm loan admin
+type ConfirmLoanAdminRequest struct {
+	ID int `json:"id" example:"1"`
+}
+
+func (req *ConfirmLoanAdminRequest) validate() error {
+	if req.ID == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'id' must be REQUIRED field but the input is '%v'.", req.ID)), response.ValidateFieldError)
+	}
+	return nil
 }
 
 // Repay
@@ -145,10 +203,35 @@ type SubmitRepayResponse struct {
 	RepayID int64 `json:"repayId" example:"1"`
 }
 
+// get repay admin
 type GetRepayAdminRequest struct {
 	ID         *int `json:"id" example:"1"`
 	ContractID *int `json:"contractId" example:"1"`
 	AccountID  *int `json:"accountId" example:"1"`
+}
+
+// confirm repay admin
+type ConfirmRepayAdminRequest struct {
+	ID int `json:"id" example:"1"`
+}
+
+func (req *ConfirmRepayAdminRequest) validate() error {
+	if req.ID == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'id' must be REQUIRED field but the input is '%v'.", req.ID)), response.ValidateFieldError)
+	}
+	return nil
+}
+
+// reject repay admin
+type RejectRepayAdminRequest struct {
+	ID int `json:"id" example:"1"`
+}
+
+func (req *RejectRepayAdminRequest) validate() error {
+	if req.ID == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'id' must be REQUIRED field but the input is '%v'.", req.ID)), response.ValidateFieldError)
+	}
+	return nil
 }
 
 // Price
