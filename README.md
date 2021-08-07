@@ -71,7 +71,7 @@ make create-postgres
 ```
 
 2. Create database & table
-SQL script in ./lending.sql
+SQL script in [SQL Script](https://github.com/khanapat/lending-engine/blob/master/lending.sql)
 
 3. Stopping postgres docker
 ``` bash
