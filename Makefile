@@ -27,4 +27,20 @@ create: test
     		-o $(APP)
 
 container: create
-	docker build . --no-cache -t $(PROJECT):$(RELEASE) -f build/Dockerfile
+	docker build . --no-cache -t $(PROJECT):$(RELEASE) -f build/app/Dockerfile
+
+create-redis:
+	docker-compose -f ./build/redis/docker-compose.yaml up -d
+
+delete-redis:
+	docker-compose -f ./build/redis/docker-compose.yaml down
+
+redis-cli:
+	docker exec -it redis redis-cli -a P@ssw0rd
+# redis-cli -a P@ssw0rd
+
+create-postgres:
+	docker-compose -f ./build/postgres/docker-compose.yaml up -d
+
+delete-postgres:
+	docker-compose -f ./build/postgres/docker-compose.yaml down

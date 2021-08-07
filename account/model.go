@@ -179,6 +179,7 @@ type SendVerifyEmailClientRequest struct {
 }
 
 type BodySendVerifyEmailClient struct {
+	Name string `json:"name" example:"trust momo"`
 	Link string `json:"link" example:"www.lending.com/WERaOJOsfX"`
 }
 

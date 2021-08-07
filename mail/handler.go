@@ -112,9 +112,9 @@ func (s *mailHandler) Otp(c *handler.Ctx) error {
 		Subject:  "You have requested OTP",
 		Template: viper.GetString("client.email-api.otp-template"),
 		Body: BodySendMailOtpClient{
-			UserName: fmt.Sprintf("%s %s", *account.FirstName, *account.LastName),
-			RefNo:    refNo,
-			Otp:      otp,
+			Name:  fmt.Sprintf("%s %s", *account.FirstName, *account.LastName),
+			RefNo: refNo,
+			Otp:   otp,
 		},
 		Auth: true,
 	}

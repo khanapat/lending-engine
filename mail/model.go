@@ -15,9 +15,9 @@ type SendMailOtpClientRequest struct {
 }
 
 type BodySendMailOtpClient struct {
-	UserName string `json:"userName" example:"trust"`
-	RefNo    string `json:"refNo" example:"tog2C7"`
-	Otp      string `json:"otp" example:"9999"`
+	Name  string `json:"name" example:"trust"`
+	RefNo string `json:"refNo" example:"tog2C7"`
+	Otp   string `json:"otp" example:"9999"`
 }
 
 type OtpMailResponse struct {
