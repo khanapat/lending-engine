@@ -1,4 +1,4 @@
-# lending-engine (Backend API)
+# Lending-Engine (Backend API)
 
 [![Github Actions Status](https://github.com/gbrlsnchs/jwt/workflows/Linux,%20macOS%20and%20Windows/badge.svg)](https://github.com/gbrlsnchs/jwt/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/gbrlsnchs/jwt)](https://goreportcard.com/report/github.com/gbrlsnchs/jwt)
@@ -40,7 +40,7 @@ This project use these components to run service.
 * [Go](https://golang.org) 
 * [Redis](https://redis.io/)
 * [Postgres](https://www.postgresql.org/)
-* [Mail-API]()
+* [Mail-API](https://github.com/khanapat/mail-api)
 * [Bitkub-Websocket]()
 
 <!-- GETTING STARTED -->
