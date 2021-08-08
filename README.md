@@ -93,7 +93,8 @@ make delete-redis
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-There are swagger api for testing. It can use after running app. The URL is `http://localhost:9090/swagger/index.html`
+There are swagger api for testing. It can use after running app. The URL is `http://localhost:9090/swagger/index.html`. Default username is `admin` and Default password is `password`.
+
 * Running App
 ```bash
 make run
