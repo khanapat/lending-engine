@@ -32,6 +32,13 @@ const (
 	ErrRequestResetPasswordMessageEN     string = "Cannot request reset password."
 	SuccessResetPasswordMessageEN        string = "Success reset password."
 	ErrResetPasswordMessageEN            string = "Cannot reset password."
+	//// Admin
+	SuccessGetDocumentInfoAdminMessageEN    string = "Success get document info."
+	ErrGetDocumentInfoAdminMessageEN        string = "Cannot get document info."
+	SuccessCreateDocumentInfoAdminMessageEN string = "Success create document info."
+	ErrCreateDocumentInfoAdminMessageEN     string = "Cannot create document info."
+	SuccessUpdateDocumentInfoAdminMessageEN string = "Success update document info."
+	ErrUpdateDocumentInfoAdminMessageEN     string = "Cannot update document info."
 	// Lending
 	//// User
 	SuccessGetToknPriceMessageEN         string = "Success get token price."
@@ -76,6 +83,10 @@ const (
 	ErrGetContractAdminMessageEN               string = "Cannot get loan contract."
 	SuccessConfirmContractAdminMessageEN       string = "Success confirm loan contract."
 	ErrConfirmContractAdminMessageEN           string = "Cannot confirm loan contract."
+	SuccessCreateInterestTermAdminMessageEN    string = "Success create interest term."
+	ErrCreateInterestTermAdminMessageEN        string = "Cannot create interest term."
+	SuccessUpdateInterestTermAdminMessageEN    string = "Success update interest term."
+	ErrUpdateInterestTermAdminMessageEN        string = "Cannot update interest term."
 	SuccessGetRepaymentAdminMessageEN          string = "Success get repayment."
 	ErrGetRepaymentAdminMessageEN              string = "Cannot get repayment."
 	SuccessConfirmRepaymentAdminMessageEN      string = "Success confirm repayment."
@@ -120,6 +131,13 @@ const (
 	ErrRequestResetPasswordMessageTH     string = "ไม่สามารถส่งคำขอร้องเพื่อตั้งรหัสบัญชีใหม่ได้."
 	SuccessResetPasswordMessageTH        string = "ตั้งรหัสบัญชีใหม่สำเร็จ."
 	ErrResetPasswordMessageTH            string = "ไม่สามารถตั้งรหัสบัญชีใหม่ได้."
+	//// Admin
+	SuccessGetDocumentInfoAdminMessageTH    string = "แสดงข้อมูลเอกสารสำเร็จ."
+	ErrGetDocumentInfoAdminMessageTH        string = "ไม่สามารถแสดงข้อมูลเอกสารได้."
+	SuccessCreateDocumentInfoAdminMessageTH string = "สร้างข้อมูลเอกสารสำเร็จ."
+	ErrCreateDocumentInfoAdminMessageTH     string = "ไม่สามารถสร้างข้อมูลเอกสารได้."
+	SuccessUpdateDocumentInfoAdminMessageTH string = "แก้ไขข้อมูลเอกสารสำเร็จ."
+	ErrUpdateDocumentInfoAdminMessageTH     string = "ไม่สามารถแก้ไขข้อมูลเอกสารได้."
 	// Lending
 	//// User
 	SuccessGetToknPriceMessageTH         string = "แสดงราคาซื้อขายโทเคนสำเร็จ."
@@ -164,6 +182,10 @@ const (
 	ErrGetContractAdminMessageTH               string = "ไม่สามารถแสดงสัญญากู้ยืมได้."
 	SuccessConfirmContractAdminMessageTH       string = "ยืนยันการกู้ยืมสำเร็จ."
 	ErrConfirmContractAdminMessageTH           string = "ไม่สามารถยืนยันการกู้ยืมได้."
+	SuccessCreateInterestTermAdminMessageTH    string = "สร้างอัตราดอกเบี้ยสำเร็จ."
+	ErrCreateInterestTermAdminMessageTH        string = "ไม่สามารถอัตราดอกเบี้ยได้."
+	SuccessUpdateInterestTermAdminMessageTH    string = "แก้ไขอัตราดอกเบี้ยสำเร็จ."
+	ErrUpdateInterestTermAdminMessageTH        string = "ไม่สามารถแก้ไขอัตราดอกเบี้ยได้."
 	SuccessGetRepaymentAdminMessageTH          string = "แสดงรายการจ่ายเงินคืนสำเร็จ."
 	ErrGetRepaymentAdminMessageTH              string = "ไม่สามารถแสดงรายการจ่ายเงินคืนได้."
 	SuccessConfirmRepaymentAdminMessageTH      string = "ยืนยันการจ่ายเงินคืนสำเร็จ."

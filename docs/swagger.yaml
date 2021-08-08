@@ -12,6 +12,18 @@ definitions:
         example: 1
         type: integer
     type: object
+  account.CreateDocumentInfoAdminRequest:
+    properties:
+      documentType:
+        example: Citizen ID
+        type: string
+    type: object
+  account.CreateDocumentInfoAdminResponse:
+    properties:
+      documentId:
+        example: 1
+        type: integer
+    type: object
   account.Document:
     properties:
       documentId:
@@ -28,6 +40,13 @@ definitions:
         type: string
       tag:
         example: id
+        type: string
+    type: object
+  account.DocumentInfo:
+    properties:
+      documentId:
+        type: integer
+      documentType:
         type: string
     type: object
   account.GetAccountAdminResponse:
@@ -170,6 +189,15 @@ definitions:
         example: ID.jpg
         type: string
     type: object
+  account.UpdateDocumentInfoAdminRequest:
+    properties:
+      documentId:
+        example: 1
+        type: integer
+      documentType:
+        example: Citizen ID
+        type: string
+    type: object
   lending.BorrowLoanRequest:
     properties:
       interestCode:
@@ -241,6 +269,18 @@ definitions:
       updatedDatetime:
         example: "2021-02-03 12:13:14"
         type: string
+    type: object
+  lending.CreateInterestTermAdminRequest:
+    properties:
+      interestRate:
+        example: 0.06
+        type: number
+    type: object
+  lending.CreateInterestTermAdminResponse:
+    properties:
+      interestCode:
+        example: 1
+        type: integer
     type: object
   lending.GetCreditAvailableResponse:
     properties:
@@ -394,6 +434,15 @@ definitions:
         type: number
       price:
         example: 1.04247525e+06
+        type: number
+    type: object
+  lending.UpdateInterestTermAdminRequest:
+    properties:
+      interestCode:
+        example: 1
+        type: integer
+      interestRate:
+        example: 0.06
         type: number
     type: object
   lending.WalletTransaction:
@@ -734,6 +783,192 @@ paths:
           schema:
             $ref: '#/definitions/response.ErrResponse'
       summary: Reject Deposit Admin
+      tags:
+      - Admin
+  /admin/documentInfo:
+    get:
+      consumes:
+      - application/json
+      description: get all of document info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/account.DocumentInfo'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Get Document Info Admin
+      tags:
+      - Admin
+    post:
+      consumes:
+      - application/json
+      description: create new document info
+      parameters:
+      - description: request body to create document info
+        in: body
+        name: CreateDocumentInfo
+        required: true
+        schema:
+          $ref: '#/definitions/account.CreateDocumentInfoAdminRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/account.CreateDocumentInfoAdminResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Create Document Info Admin
+      tags:
+      - Admin
+    put:
+      consumes:
+      - application/json
+      description: update document type by document id
+      parameters:
+      - description: request body to update document info
+        in: body
+        name: UpdateDocumentInfo
+        required: true
+        schema:
+          $ref: '#/definitions/account.UpdateDocumentInfoAdminRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Update Document Info Admin
+      tags:
+      - Admin
+  /admin/interest:
+    get:
+      consumes:
+      - application/json
+      description: get all of interest term
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/lending.InterestTerm'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Get Interest Term Admin
+      tags:
+      - Admin
+    post:
+      consumes:
+      - application/json
+      description: create new interest rate
+      parameters:
+      - description: request body to create interest term
+        in: body
+        name: CreateInterestTerm
+        required: true
+        schema:
+          $ref: '#/definitions/lending.CreateInterestTermAdminRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/lending.CreateInterestTermAdminResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Create Interest Term Admin
+      tags:
+      - Admin
+    put:
+      consumes:
+      - application/json
+      description: update interest rate by interest code
+      parameters:
+      - description: request body to update interest term
+        in: body
+        name: UpdateInterestTerm
+        required: true
+        schema:
+          $ref: '#/definitions/lending.UpdateInterestTermAdminRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Update Interest Term Admin
       tags:
       - Admin
   /admin/repay:
@@ -1088,36 +1323,6 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Submit Deposit
-      tags:
-      - Lending
-  /interest:
-    get:
-      consumes:
-      - application/json
-      description: get all of interest term
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Success
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/lending.InterestTerm'
-                  type: array
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.ErrResponse'
-      summary: Get Interest Term
       tags:
       - Lending
   /login:

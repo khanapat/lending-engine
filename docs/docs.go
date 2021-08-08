@@ -432,6 +432,306 @@ var doc = `{
                 }
             }
         },
+        "/admin/documentInfo": {
+            "get": {
+                "description": "get all of document info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get Document Info Admin",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/account.DocumentInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "update document type by document id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update Document Info Admin",
+                "parameters": [
+                    {
+                        "description": "request body to update document info",
+                        "name": "UpdateDocumentInfo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.UpdateDocumentInfoAdminRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "create new document info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Create Document Info Admin",
+                "parameters": [
+                    {
+                        "description": "request body to create document info",
+                        "name": "CreateDocumentInfo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.CreateDocumentInfoAdminRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/account.CreateDocumentInfoAdminResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/interest": {
+            "get": {
+                "description": "get all of interest term",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get Interest Term Admin",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/lending.InterestTerm"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "update interest rate by interest code",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update Interest Term Admin",
+                "parameters": [
+                    {
+                        "description": "request body to update interest term",
+                        "name": "UpdateInterestTerm",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/lending.UpdateInterestTermAdminRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "create new interest rate",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Create Interest Term Admin",
+                "parameters": [
+                    {
+                        "description": "request body to create interest term",
+                        "name": "CreateInterestTerm",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/lending.CreateInterestTermAdminRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/lending.CreateInterestTermAdminResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/repay": {
             "get": {
                 "description": "get repayment by id, contract id and account id",
@@ -985,56 +1285,6 @@ var doc = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/lending.SubmitDepositResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/interest": {
-            "get": {
-                "description": "get all of interest term",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Lending"
-                ],
-                "summary": "Get Interest Term",
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/lending.InterestTerm"
-                                            }
                                         }
                                     }
                                 }
@@ -1800,6 +2050,24 @@ var doc = `{
                 }
             }
         },
+        "account.CreateDocumentInfoAdminRequest": {
+            "type": "object",
+            "properties": {
+                "documentType": {
+                    "type": "string",
+                    "example": "Citizen ID"
+                }
+            }
+        },
+        "account.CreateDocumentInfoAdminResponse": {
+            "type": "object",
+            "properties": {
+                "documentId": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "account.Document": {
             "type": "object",
             "properties": {
@@ -1822,6 +2090,17 @@ var doc = `{
                 "tag": {
                     "type": "string",
                     "example": "id"
+                }
+            }
+        },
+        "account.DocumentInfo": {
+            "type": "object",
+            "properties": {
+                "documentId": {
+                    "type": "integer"
+                },
+                "documentType": {
+                    "type": "string"
                 }
             }
         },
@@ -2024,6 +2303,19 @@ var doc = `{
                 }
             }
         },
+        "account.UpdateDocumentInfoAdminRequest": {
+            "type": "object",
+            "properties": {
+                "documentId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "documentType": {
+                    "type": "string",
+                    "example": "Citizen ID"
+                }
+            }
+        },
         "lending.BorrowLoanRequest": {
             "type": "object",
             "properties": {
@@ -2124,6 +2416,24 @@ var doc = `{
                 "updatedDatetime": {
                     "type": "string",
                     "example": "2021-02-03 12:13:14"
+                }
+            }
+        },
+        "lending.CreateInterestTermAdminRequest": {
+            "type": "object",
+            "properties": {
+                "interestRate": {
+                    "type": "number",
+                    "example": 0.06
+                }
+            }
+        },
+        "lending.CreateInterestTermAdminResponse": {
+            "type": "object",
+            "properties": {
+                "interestCode": {
+                    "type": "integer",
+                    "example": 1
                 }
             }
         },
@@ -2344,6 +2654,19 @@ var doc = `{
                 "price": {
                     "type": "number",
                     "example": 1042475.25
+                }
+            }
+        },
+        "lending.UpdateInterestTermAdminRequest": {
+            "type": "object",
+            "properties": {
+                "interestCode": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "interestRate": {
+                    "type": "number",
+                    "example": 0.06
                 }
             }
         },

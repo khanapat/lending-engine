@@ -148,7 +148,13 @@ func main() {
 	baseApi.Post("/reset", handler.Helper(accountHandler.RequestResetPassword, logger))
 	baseApi.Put("/reset", handler.Helper(accountHandler.ResetPassword, logger))
 
-	baseApi.Get("/interest", handler.Helper(lendingHandler.GetInterestTerm, logger))
+	baseApi.Get("/admin/documentInfo", handler.Helper(accountHandler.GetDocumentInfoAdmin, logger))
+	baseApi.Post("/admin/documentInfo", handler.Helper(accountHandler.CreateDocumentInfoAdmin, logger))
+	baseApi.Put("/admin/documentInfo", handler.Helper(accountHandler.UpdateDocumentInfoAdmin, logger))
+
+	baseApi.Get("/admin/interest", handler.Helper(lendingHandler.GetInterestTermAdmin, logger))
+	baseApi.Post("/admin/interest", handler.Helper(lendingHandler.CreateInterestTermAdmin, logger))
+	baseApi.Put("/admin/interest", handler.Helper(lendingHandler.UpdateInterestTermAdmin, logger))
 
 	baseApi.Get("/admin/account", handler.Helper(accountHandler.GetAccountAdmin, logger))
 	baseApi.Post("/admin/account/confirm", handler.Helper(accountHandler.ConfirmAccountAdmin, logger))

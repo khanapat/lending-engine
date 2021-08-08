@@ -725,22 +725,80 @@ func (s *lendingHandler) ConfirmLoanAdmin(c *handler.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).ConfirmContractAdminSuccess, nil))
 }
 
-// GetInterestTerm
-// @Summary Get Interest Term
+// GetInterestTermAdmin
+// @Summary Get Interest Term Admin
 // @Description get all of interest term
-// @Tags Lending
+// @Tags Admin
 // @Accept json
 // @Produce json
 // @Success 200 {object} response.Response{data=[]lending.InterestTerm} "Success"
 // @Failure 400 {object} response.ErrResponse "Bad Request"
 // @Failure 500 {object} response.ErrResponse "Internal Server Error"
-// @Router /interest [get]
-func (s *lendingHandler) GetInterestTerm(c *handler.Ctx) error {
+// @Router /admin/interest [get]
+func (s *lendingHandler) GetInterestTermAdmin(c *handler.Ctx) error {
 	interestTerm, err := s.LendingRepository.QueryInterestTermRepo(c.Context())
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetInterestTermSuccess, &interestTerm))
+}
+
+// CreateInterestTermAdmin
+// @Summary Create Interest Term Admin
+// @Description create new interest rate
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param CreateInterestTerm body lending.CreateInterestTermAdminRequest true "request body to create interest term"
+// @Success 200 {object} response.Response{data=lending.CreateInterestTermAdminResponse} "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Router /admin/interest [post]
+func (s *lendingHandler) CreateInterestTermAdmin(c *handler.Ctx) error {
+	var req CreateInterestTermAdminRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).CreateInterestTermAdminRequest, err.Error()))
+	}
+	if err := req.validate(); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).CreateInterestTermAdminRequest, err.Error()))
+	}
+
+	interestCode, err := s.LendingRepository.InsertInterestTermRepo(c.Context(), req.InterestRate)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+
+	createInterestTermAdminResponse := CreateInterestTermAdminResponse{
+		InterestCode: interestCode,
+	}
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).CreateInterestTermAdminSuccess, &createInterestTermAdminResponse))
+}
+
+// UpdateInterestTermAdmin
+// @Summary Update Interest Term Admin
+// @Description update interest rate by interest code
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param UpdateInterestTerm body lending.UpdateInterestTermAdminRequest true "request body to update interest term"
+// @Success 200 {object} response.Response "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Router /admin/interest [put]
+func (s *lendingHandler) UpdateInterestTermAdmin(c *handler.Ctx) error {
+	var req UpdateInterestTermAdminRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).UpdateInterestTermAdminRequest, err.Error()))
+	}
+	if err := req.validate(); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).UpdateInterestTermAdminRequest, err.Error()))
+	}
+
+	rows, err := s.LendingRepository.UpdateInterestTermRepo(c.Context(), req.InterestCode, req.InterestRate)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, fmt.Sprintf("expected to affect 1 row, affected %d", rows)))
+	}
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).UpdateInterestTermAdminSuccess, nil))
 }
 
 // GetRepay

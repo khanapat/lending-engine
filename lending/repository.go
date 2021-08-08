@@ -312,6 +312,40 @@ func (r lendingRepositoryDB) QueryInterestTermRepo(ctx context.Context) (*[]Inte
 	}
 }
 
+func (r lendingRepositoryDB) InsertInterestTermRepo(ctx context.Context, interestRate float64) (int64, error) {
+	var interestCode int64
+	if err := r.db.QueryRowContext(ctx, `
+		INSERT INTO lending.public.interest_term
+		(
+			interest_rate
+		)
+		VALUES
+		(
+			$1
+		)
+		RETURNING interest_code
+	;`, interestRate).Scan(&interestCode); err != nil {
+		return 0, err
+	}
+	return interestCode, nil
+}
+
+func (r lendingRepositoryDB) UpdateInterestTermRepo(ctx context.Context, code int, interestRate float64) (int64, error) {
+	result, err := r.db.ExecContext(ctx, `
+		UPDATE lending.public.interest_term
+		SET	interest_rate = $1
+		WHERE interest_code = $2
+	;`, interestRate, code)
+	if err != nil {
+		return 0, err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rows, nil
+}
+
 func (r lendingRepositoryDB) QueryRepayTransactionByIDRepo(ctx context.Context, id int) (*RepayTransaction, error) {
 	var repay RepayTransaction
 	err := r.db.GetContext(ctx, &repay, `

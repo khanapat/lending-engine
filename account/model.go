@@ -223,3 +223,35 @@ func (req *ResetPasswordRequest) validate() error {
 	}
 	return nil
 }
+
+// create document info admin
+type CreateDocumentInfoAdminRequest struct {
+	DocumentType string `json:"documentType" example:"Citizen ID"`
+}
+
+func (req *CreateDocumentInfoAdminRequest) validate() error {
+	if utf8.RuneCountInString(req.DocumentType) == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'documentType' must be REQUIRED field but the input is '%v'.", req.DocumentType)), response.ValidateFieldError)
+	}
+	return nil
+}
+
+type CreateDocumentInfoAdminResponse struct {
+	DocumentID int64 `json:"documentId" example:"1"`
+}
+
+// update document info admin
+type UpdateDocumentInfoAdminRequest struct {
+	DocumentID   int    `json:"documentId" example:"1"`
+	DocumentType string `json:"documentType" example:"Citizen ID"`
+}
+
+func (req *UpdateDocumentInfoAdminRequest) validate() error {
+	if req.DocumentID == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'documentId' must be REQUIRED field but the input is '%v'.", req.DocumentID)), response.ValidateFieldError)
+	}
+	if utf8.RuneCountInString(req.DocumentType) == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'documentType' must be REQUIRED field but the input is '%v'.", req.DocumentType)), response.ValidateFieldError)
+	}
+	return nil
+}

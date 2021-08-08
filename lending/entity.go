@@ -68,6 +68,8 @@ type LendingRepository interface {
 	InsertContractRepo(context.Context, int, int, float64, int) (int64, error)
 	UpdateContractRepo(context.Context, int, string, string) (int64, error)
 	QueryInterestTermRepo(context.Context) (*[]InterestTerm, error)
+	InsertInterestTermRepo(context.Context, float64) (int64, error)
+	UpdateInterestTermRepo(context.Context, int, float64) (int64, error)
 	QueryRepayTransactionByIDRepo(context.Context, int) (*RepayTransaction, error)
 	QueryRepayTransactionRepo(context.Context, map[string]interface{}) (*[]RepayTransaction, error)
 	InsertRepayTransactionRepo(context.Context, int, int, float64, string) (int64, error)

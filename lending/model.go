@@ -179,6 +179,38 @@ func (req *ConfirmLoanAdminRequest) validate() error {
 	return nil
 }
 
+// create interestTerm admin
+type CreateInterestTermAdminRequest struct {
+	InterestRate float64 `json:"interestRate" example:"0.06"`
+}
+
+func (req *CreateInterestTermAdminRequest) validate() error {
+	if req.InterestRate == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'interestRate' must be REQUIRED field but the input is '%v'.", req.InterestRate)), response.ValidateFieldError)
+	}
+	return nil
+}
+
+type CreateInterestTermAdminResponse struct {
+	InterestCode int64 `json:"interestCode" example:"1"`
+}
+
+// update interestTerm admin
+type UpdateInterestTermAdminRequest struct {
+	InterestCode int     `json:"interestCode" example:"1"`
+	InterestRate float64 `json:"interestRate" example:"0.06"`
+}
+
+func (req *UpdateInterestTermAdminRequest) validate() error {
+	if req.InterestCode == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'interestCode' must be REQUIRED field but the input is '%v'.", req.InterestCode)), response.ValidateFieldError)
+	}
+	if req.InterestRate == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'interestRate' must be REQUIRED field but the input is '%v'.", req.InterestRate)), response.ValidateFieldError)
+	}
+	return nil
+}
+
 // Repay
 type SubmitRepayRequest struct {
 	ContractID int    `json:"contractId" example:"1"`

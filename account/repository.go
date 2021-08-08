@@ -280,3 +280,52 @@ func (r accountRepositoryDB) ConfirmChangePasswordRepo(ctx context.Context, acco
 	}
 	return affect, nil
 }
+
+func (r accountRepositoryDB) QueryDocumentInfoAdminRepo(ctx context.Context) (*[]DocumentInfo, error) {
+	documentInfos := make([]DocumentInfo, 0)
+	err := r.db.SelectContext(ctx, &documentInfos, `
+		SELECT document_id, document_type
+		FROM lending.public.document_info
+	;`)
+	switch {
+	case err == sql.ErrNoRows:
+		return &documentInfos, nil
+	case err != nil:
+		return nil, err
+	default:
+		return &documentInfos, nil
+	}
+}
+
+func (r accountRepositoryDB) InsertDocumentInfoAdminRepo(ctx context.Context, docType string) (int64, error) {
+	var documentId int64
+	if err := r.db.QueryRowContext(ctx, `
+		INSERT INTO lending.public.document_info
+		(
+			document_type
+		)
+		VALUES
+		(
+			$1
+		)
+	;`, docType).Scan(&documentId); err != nil {
+		return 0, err
+	}
+	return documentId, nil
+}
+
+func (r accountRepositoryDB) UpdateDocumentInfoAdminRepo(ctx context.Context, docId int, docType string) (int64, error) {
+	result, err := r.db.ExecContext(ctx, `
+		UPDATE lending.public.document_info
+		SET document_type = $1
+		WHERE document_id = $2
+	;`, docType, docId)
+	if err != nil {
+		return 0, err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rows, nil
+}

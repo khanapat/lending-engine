@@ -28,8 +28,8 @@ type AccountDocument struct {
 }
 
 type DocumentInfo struct {
-	DocumentID   *int    `db:"document_id"`
-	DocumentType *string `db:"document_type"`
+	DocumentID   *int    `db:"document_id" json:"documentId"`
+	DocumentType *string `db:"document_type" json:"documentType"`
 }
 
 type AccountDetail struct {
@@ -62,4 +62,7 @@ type AccountRepository interface {
 	GetTermsConditionRepo(context.Context, int) (*TermsCondition, error)
 	AcceptTermsConditionRepo(context.Context, int, string) (int64, error)
 	ConfirmChangePasswordRepo(context.Context, int, string) (int64, error)
+	QueryDocumentInfoAdminRepo(context.Context) (*[]DocumentInfo, error)
+	InsertDocumentInfoAdminRepo(context.Context, string) (int64, error)
+	UpdateDocumentInfoAdminRepo(context.Context, int, string) (int64, error)
 }

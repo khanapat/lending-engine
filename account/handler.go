@@ -566,3 +566,79 @@ func (s *accountHandler) ResetPassword(c *handler.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).ResetPasswordSuccess, nil))
 }
+
+// GetDocumentInfoAdmin
+// @Summary Get Document Info Admin
+// @Description get all of document info
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response{data=[]account.DocumentInfo} "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Router /admin/documentInfo [get]
+func (s *accountHandler) GetDocumentInfoAdmin(c *handler.Ctx) error {
+	documentInfos, err := s.AccountRepository.QueryDocumentInfoAdminRepo(c.Context())
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).GetDocumentInfoAdminSuccess, &documentInfos))
+}
+
+// CreateDocumentInfoAdmin
+// @Summary Create Document Info Admin
+// @Description create new document info
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param CreateDocumentInfo body account.CreateDocumentInfoAdminRequest true "request body to create document info"
+// @Success 200 {object} response.Response{data=account.CreateDocumentInfoAdminResponse} "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Router /admin/documentInfo [post]
+func (s *accountHandler) CreateDocumentInfoAdmin(c *handler.Ctx) error {
+	var req CreateDocumentInfoAdminRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).CreateDocumentInfoAdminRequest, err.Error()))
+	}
+	if err := req.validate(); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).CreateDocumentInfoAdminRequest, err.Error()))
+	}
+
+	documentId, err := s.AccountRepository.InsertDocumentInfoAdminRepo(c.Context(), req.DocumentType)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+
+	createDocumentInfoAdminResponse := CreateDocumentInfoAdminResponse{
+		DocumentID: documentId,
+	}
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).CreateDocumentInfoAdminSuccess, &createDocumentInfoAdminResponse))
+}
+
+// UpdateDocumentInfoAdmin
+// @Summary Update Document Info Admin
+// @Description update document type by document id
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param UpdateDocumentInfo body account.UpdateDocumentInfoAdminRequest true "request body to update document info"
+// @Success 200 {object} response.Response "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Router /admin/documentInfo [put]
+func (s *accountHandler) UpdateDocumentInfoAdmin(c *handler.Ctx) error {
+	var req UpdateDocumentInfoAdminRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).UpdateDocumentInfoAdminRequest, err.Error()))
+	}
+	if err := req.validate(); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).UpdateDocumentInfoAdminRequest, err.Error()))
+	}
+
+	rows, err := s.AccountRepository.UpdateDocumentInfoAdminRepo(c.Context(), req.DocumentID, req.DocumentType)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, fmt.Sprintf("expected to affect 1 row, affected %d", rows)))
+	}
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).UpdateDocumentInfoAdminSuccess, nil))
+}

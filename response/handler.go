@@ -25,6 +25,11 @@ var (
 		RequestResetPasswordThirdParty:    ErrResponse{Code: ErrThirdPartyCode, Title: ErrRequestResetPasswordMessageEN, Description: ErrThirdPartyDescEN},
 		ResetPasswordSuccess:              Response{Code: SuccessCode, Title: SuccessResetPasswordMessageEN},
 		ResetPasswordRequest:              ErrResponse{Code: ErrInvalidRequestCode, Title: ErrResetPasswordMessageEN, Description: ErrRequestDataDescEN},
+		GetDocumentInfoAdminSuccess:       Response{Code: SuccessCode, Title: SuccessGetDocumentInfoAdminMessageEN},
+		CreateDocumentInfoAdminSuccess:    Response{Code: SuccessCode, Title: SuccessCreateDocumentInfoAdminMessageEN},
+		CreateDocumentInfoAdminRequest:    ErrResponse{Code: ErrInvalidRequestCode, Title: ErrCreateDocumentInfoAdminMessageEN, Description: ErrRequestDataDescEN},
+		UpdateDocumentInfoAdminSuccess:    Response{Code: SuccessCode, Title: SuccessUpdateDocumentInfoAdminMessageEN},
+		UpdateDocumentInfoAdminRequest:    ErrResponse{Code: ErrInvalidRequestCode, Title: ErrUpdateDocumentInfoAdminMessageEN, Description: ErrRequestDataDescEN},
 		GetTokenPriceSuccess:              Response{Code: SuccessCode, Title: SuccessGetToknPriceMessageEN},
 		PreCalculationLoanSuccess:         Response{Code: SuccessCode, Title: SuccessPreCalculationLoanMessageEN},
 		PreCalculationLoanRequest:         ErrResponse{Code: ErrInvalidRequestCode, Title: ErrPreCalculationLoanMessageEN, Description: ErrRequestDataDescEN},
@@ -65,6 +70,10 @@ var (
 		GetContractAdminRequest:           ErrResponse{Code: ErrInvalidRequestCode, Title: ErrGetContractAdminMessageEN, Description: ErrRequestDataDescEN},
 		ConfirmContractAdminSuccess:       Response{Code: SuccessCode, Title: SuccessConfirmContractAdminMessageEN},
 		ConfirmContractAdminRequest:       ErrResponse{Code: ErrInvalidRequestCode, Title: ErrConfirmContractAdminMessageEN, Description: ErrRequestDataDescEN},
+		CreateInterestTermAdminSuccess:    Response{Code: SuccessCode, Title: SuccessCreateInterestTermAdminMessageEN},
+		CreateInterestTermAdminRequest:    ErrResponse{Code: ErrInvalidRequestCode, Title: ErrCreateInterestTermAdminMessageEN, Description: ErrRequestDataDescEN},
+		UpdateInterestTermAdminSuccess:    Response{Code: SuccessCode, Title: SuccessUpdateInterestTermAdminMessageEN},
+		UpdateInterestTermAdminRequest:    ErrResponse{Code: ErrInvalidRequestCode, Title: ErrUpdateInterestTermAdminMessageEN, Description: ErrRequestDataDescEN},
 		GetRepaymentAdminSuccess:          Response{Code: SuccessCode, Title: SuccessGetRepaymentAdminMessageEN},
 		GetRepaymentAdminRequest:          ErrResponse{Code: ErrInvalidRequestCode, Title: ErrGetRepaymentAdminMessageEN, Description: ErrRequestDataDescEN},
 		ConfirmRepaymentAdminSuccess:      Response{Code: SuccessCode, Title: SuccessConfirmRepaymentAdminMessageEN},
@@ -101,6 +110,11 @@ var (
 		RequestResetPasswordThirdParty:    ErrResponse{Code: ErrThirdPartyCode, Title: ErrRequestResetPasswordMessageTH, Description: ErrThirdPartyDescTH},
 		ResetPasswordSuccess:              Response{Code: SuccessCode, Title: SuccessResetPasswordMessageTH},
 		ResetPasswordRequest:              ErrResponse{Code: ErrInvalidRequestCode, Title: ErrResetPasswordMessageTH, Description: ErrRequestDataDescTH},
+		GetDocumentInfoAdminSuccess:       Response{Code: SuccessCode, Title: SuccessGetDocumentInfoAdminMessageTH},
+		CreateDocumentInfoAdminSuccess:    Response{Code: SuccessCode, Title: SuccessCreateDocumentInfoAdminMessageTH},
+		CreateDocumentInfoAdminRequest:    ErrResponse{Code: ErrInvalidRequestCode, Title: ErrCreateDocumentInfoAdminMessageTH, Description: ErrRequestDataDescTH},
+		UpdateDocumentInfoAdminSuccess:    Response{Code: SuccessCode, Title: SuccessUpdateDocumentInfoAdminMessageTH},
+		UpdateDocumentInfoAdminRequest:    ErrResponse{Code: ErrInvalidRequestCode, Title: ErrUpdateDocumentInfoAdminMessageTH, Description: ErrRequestDataDescTH},
 		GetTokenPriceSuccess:              Response{Code: SuccessCode, Title: SuccessGetToknPriceMessageTH},
 		PreCalculationLoanSuccess:         Response{Code: SuccessCode, Title: SuccessPreCalculationLoanMessageTH},
 		PreCalculationLoanRequest:         ErrResponse{Code: ErrInvalidRequestCode, Title: ErrPreCalculationLoanMessageTH, Description: ErrRequestDataDescTH},
@@ -141,6 +155,10 @@ var (
 		GetContractAdminRequest:           ErrResponse{Code: ErrInvalidRequestCode, Title: ErrGetContractAdminMessageTH, Description: ErrRequestDataDescTH},
 		ConfirmContractAdminSuccess:       Response{Code: SuccessCode, Title: SuccessConfirmContractAdminMessageTH},
 		ConfirmContractAdminRequest:       ErrResponse{Code: ErrInvalidRequestCode, Title: ErrConfirmContractAdminMessageTH, Description: ErrRequestDataDescTH},
+		CreateInterestTermAdminSuccess:    Response{Code: SuccessCode, Title: SuccessCreateInterestTermAdminMessageTH},
+		CreateInterestTermAdminRequest:    ErrResponse{Code: ErrInvalidRequestCode, Title: ErrCreateInterestTermAdminMessageTH, Description: ErrRequestDataDescTH},
+		UpdateInterestTermAdminSuccess:    Response{Code: SuccessCode, Title: SuccessUpdateInterestTermAdminMessageTH},
+		UpdateInterestTermAdminRequest:    ErrResponse{Code: ErrInvalidRequestCode, Title: ErrUpdateInterestTermAdminMessageTH, Description: ErrRequestDataDescTH},
 		GetRepaymentAdminSuccess:          Response{Code: SuccessCode, Title: SuccessGetRepaymentAdminMessageTH},
 		GetRepaymentAdminRequest:          ErrResponse{Code: ErrInvalidRequestCode, Title: ErrGetRepaymentAdminMessageTH, Description: ErrRequestDataDescTH},
 		ConfirmRepaymentAdminSuccess:      Response{Code: SuccessCode, Title: SuccessConfirmRepaymentAdminMessageTH},
@@ -169,6 +187,7 @@ type Global struct {
 	AuthenBasicWeb     ErrResponse
 	AuthorizationToken ErrResponse
 	// Account
+	//// User
 	SignUpAccountSuccess           Response
 	SignUpAccountRequest           ErrResponse
 	SignUpAccountThirdParty        ErrResponse
@@ -185,6 +204,12 @@ type Global struct {
 	RequestResetPasswordThirdParty ErrResponse
 	ResetPasswordSuccess           Response
 	ResetPasswordRequest           ErrResponse
+	//// Admin
+	GetDocumentInfoAdminSuccess    Response
+	CreateDocumentInfoAdminSuccess Response
+	CreateDocumentInfoAdminRequest ErrResponse
+	UpdateDocumentInfoAdminSuccess Response
+	UpdateDocumentInfoAdminRequest ErrResponse
 	// Lending
 	//// User
 	GetTokenPriceSuccess        Response
@@ -228,6 +253,10 @@ type Global struct {
 	GetContractAdminRequest           ErrResponse
 	ConfirmContractAdminSuccess       Response
 	ConfirmContractAdminRequest       ErrResponse
+	CreateInterestTermAdminSuccess    Response
+	CreateInterestTermAdminRequest    ErrResponse
+	UpdateInterestTermAdminSuccess    Response
+	UpdateInterestTermAdminRequest    ErrResponse
 	GetRepaymentAdminSuccess          Response
 	GetRepaymentAdminRequest          ErrResponse
 	ConfirmRepaymentAdminSuccess      Response
