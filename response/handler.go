@@ -80,6 +80,8 @@ var (
 		ConfirmRepaymentAdminRequest:      ErrResponse{Code: ErrInvalidRequestCode, Title: ErrConfirmRepaymentAdminMessageEN, Description: ErrRequestDataDescEN},
 		RejectRepaymentAdminSuccess:       Response{Code: SuccessCode, Title: SuccessRejectRepaymentAdminMessageEN},
 		RejectRepaymentAdminRequest:       ErrResponse{Code: ErrInvalidRequestCode, Title: ErrRejectRepaymentAdminMessageEN, Description: ErrRequestDataDescEN},
+		LiquidateFundAdminSuccess:         Response{Code: SuccessCode, Title: SuccessLiquidateFundAdminMessageEN},
+		LiquidateFundAdminRequest:         ErrResponse{Code: ErrInvalidRequestCode, Title: ErrLiquidateFundAdminMessageEN, Description: ErrRequestDataDescEN},
 		GetOTPSuccess:                     Response{Code: SuccessCode, Title: SuccessOTPRequestMessageEN},
 		GetOTPRequest:                     ErrResponse{Code: ErrInvalidRequestCode, Title: ErrOTPRequestMessageEN, Description: ErrRequestDataDescEN},
 		GetOTPThirdParty:                  ErrResponse{Code: ErrThirdPartyCode, Title: ErrOTPRequestMessageEN, Description: ErrThirdPartyDescEN},
@@ -165,6 +167,8 @@ var (
 		ConfirmRepaymentAdminRequest:      ErrResponse{Code: ErrInvalidRequestCode, Title: ErrConfirmRepaymentAdminMessageTH, Description: ErrRequestDataDescTH},
 		RejectRepaymentAdminSuccess:       Response{Code: SuccessCode, Title: SuccessRejectRepaymentAdminMessageTH},
 		RejectRepaymentAdminRequest:       ErrResponse{Code: ErrInvalidRequestCode, Title: ErrRejectRepaymentAdminMessageTH, Description: ErrRequestDataDescTH},
+		LiquidateFundAdminSuccess:         Response{Code: SuccessCode, Title: SuccessLiquidateFundAdminMessageTH},
+		LiquidateFundAdminRequest:         ErrResponse{Code: ErrInvalidRequestCode, Title: ErrLiquidateFundAdminMessageTH, Description: ErrRequestDataDescTH},
 		GetOTPSuccess:                     Response{Code: SuccessCode, Title: SuccessOTPRequestMessageTH},
 		GetOTPRequest:                     ErrResponse{Code: ErrInvalidRequestCode, Title: ErrOTPRequestMessageTH, Description: ErrRequestDataDescTH},
 		GetOTPThirdParty:                  ErrResponse{Code: ErrThirdPartyCode, Title: ErrOTPRequestMessageTH, Description: ErrThirdPartyDescTH},
@@ -263,6 +267,8 @@ type Global struct {
 	ConfirmRepaymentAdminRequest      ErrResponse
 	RejectRepaymentAdminSuccess       Response
 	RejectRepaymentAdminRequest       ErrResponse
+	LiquidateFundAdminSuccess         Response
+	LiquidateFundAdminRequest         ErrResponse
 	// Mail
 	GetOTPSuccess       Response
 	GetOTPRequest       ErrResponse

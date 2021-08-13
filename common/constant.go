@@ -19,6 +19,7 @@ const (
 
 const (
 	DateYYYYMMDDHHMMSSFormat string = "2006-01-02 15:04:05"
+	DateYYYYMMDDFormat       string = "2006-01-02"
 	RandomStringInt          string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	RandomInt                string = "0123456789"
 )

@@ -313,5 +313,16 @@ type SummaryLoan struct {
 
 // liquidate
 type LiquidateFundRequest struct {
-	AccountID int `json:"accountId" example:"1"`
+	ContractID int `json:"contractId" example:"1"`
+	AccountID  int `json:"accountId" example:"1"`
+}
+
+func (req *LiquidateFundRequest) validate() error {
+	if req.ContractID == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'contractId' must be REQUIRED field but the input is '%v'.", req.ContractID)), response.ValidateFieldError)
+	}
+	if req.AccountID == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'accountId' must be REQUIRED field but the input is '%v'.", req.AccountID)), response.ValidateFieldError)
+	}
+	return nil
 }

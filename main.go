@@ -176,6 +176,8 @@ func main() {
 	baseApi.Post("/admin/repay/confirm", handler.Helper(lendingHandler.ConfirmRepayAdmin, logger))
 	baseApi.Post("/admin/repay/reject", handler.Helper(lendingHandler.RejectRepayAdmin, logger))
 
+	baseApi.Post("/admin/liquidation", handler.Helper(lendingHandler.LiquidateFundAdmin, logger))
+
 	baseApi.Use(middle.AuthorizeTokenMiddleware())
 
 	baseApi.Get("/terms", handler.Helper(accountHandler.GetTermsCondition, logger))
@@ -278,6 +280,7 @@ func initViper() {
 	viper.SetDefault("loan.haircut.btc", 0.5)
 	viper.SetDefault("loan.haircut.eth", 0.5)
 	viper.SetDefault("loan.interest", 0.05)
+	viper.SetDefault("loan.liquidate-limit", 3)
 
 	viper.SetDefault("blockchain.ethereum.rpc", "https://rinkeby.infura.io/v3/9657539221eb40a79ce550650f0530a3")
 	viper.SetDefault("blockchain.ethereum.chainId", 14)

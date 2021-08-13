@@ -994,6 +994,72 @@ func (s *lendingHandler) RejectRepayAdmin(c *handler.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).RejectRepaymentAdminSuccess, nil))
 }
 
-// func (s *lendingHandler) LiquidateFundAdmin(c *handler.Ctx) error {
+// LiquidateFundAdmin
+// @Summary Liquidate Fund Admin
+// @Description liquidate all fund by account id and contract id
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param LiquidateFundAdmin body lending.LiquidateFundRequest true "request body to liquidate fund"
+// @Success 200 {object} response.Response "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Router /admin/liquidation [post]
+func (s *lendingHandler) LiquidateFundAdmin(c *handler.Ctx) error {
+	var req LiquidateFundRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).LiquidateFundAdminRequest, err.Error()))
+	}
+	if err := req.validate(); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).LiquidateFundAdminRequest, err.Error()))
+	}
 
-// }
+	wallet, err := s.LendingRepository.QueryWalletRepo(c.Context(), req.AccountID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if wallet == nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).LiquidateFundAdminRequest, "AccountID doesn't exist."))
+	}
+
+	margin, err := time.ParseInLocation(time.RFC3339, *wallet.MarginCallDate, time.Local)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, err.Error()))
+	}
+	count := int(time.Since(margin).Hours() / 24)
+	c.Log().Info(fmt.Sprintf("Margin Count: %d", count))
+	if count <= viper.GetInt("loan.liquidate-limit") {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).LiquidateFundAdminRequest, "Margin Call doesn't reach limit."))
+	}
+
+	contract, err := s.LendingRepository.QueryContractByIDRepo(c.Context(), req.ContractID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if contract == nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).LiquidateFundAdminRequest, "ContractID doesn't exist."))
+	}
+	if *contract.Status != common.OngoingStatus {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).LiquidateFundAdminRequest, "ContractID is inactive."))
+	}
+
+	rows, err := s.LendingRepository.UpdateWalletRepo(c.Context(), *wallet.AccountID, 0.0, 0.0, nil, time.Now().Format(common.DateYYYYMMDDHHMMSSFormat))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if rows != 1 {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, fmt.Sprintf("expected to affect 1 row, affected %d", rows)))
+	}
+	c.Log().Info(fmt.Sprintf("AccountID: %d | BTC: %f | ETH: %f", *wallet.AccountID, 0.0, 0.0))
+
+	contractRows, err := s.LendingRepository.UpdateContractRepo(c.Context(), *contract.ContractID, common.ClosedStatus, time.Now().Format(common.DateYYYYMMDDHHMMSSFormat))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if contractRows != 1 {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, fmt.Sprintf("expected to affect 1 row, affected %d", contractRows)))
+	}
+	c.Log().Info(fmt.Sprintf("ContractID: %d - Status: %s", *contract.ContractID, common.ClosedStatus))
+
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).LiquidateFundAdminSuccess, nil))
+}

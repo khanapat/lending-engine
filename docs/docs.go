@@ -732,6 +732,52 @@ var doc = `{
                 }
             }
         },
+        "/admin/liquidation": {
+            "post": {
+                "description": "liquidate all fund by account id and contract id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Liquidate Fund Admin",
+                "parameters": [
+                    {
+                        "description": "request body to liquidate fund",
+                        "name": "LiquidateFundAdmin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/lending.LiquidateFundRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/repay": {
             "get": {
                 "description": "get repayment by id, contract id and account id",
@@ -2487,6 +2533,19 @@ var doc = `{
                 "interestRate": {
                     "type": "number",
                     "example": 0.05
+                }
+            }
+        },
+        "lending.LiquidateFundRequest": {
+            "type": "object",
+            "properties": {
+                "accountId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "contractId": {
+                    "type": "integer",
+                    "example": 1
                 }
             }
         },

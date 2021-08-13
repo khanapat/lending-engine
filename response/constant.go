@@ -93,6 +93,8 @@ const (
 	ErrConfirmRepaymentAdminMessageEN          string = "Cannot confirm repayment."
 	SuccessRejectRepaymentAdminMessageEN       string = "Success reject repayment."
 	ErrRejectRepaymentAdminMessageEN           string = "Cannot reject repayment."
+	SuccessLiquidateFundAdminMessageEN         string = "Success liquidate fund."
+	ErrLiquidateFundAdminMessageEN             string = "Cannot liquidate fund."
 	// Mail
 	SuccessOTPRequestMessageEN      string = "Success request otp."
 	ErrOTPRequestMessageEN          string = "Cannot request otp."
@@ -192,6 +194,8 @@ const (
 	ErrConfirmRepaymentAdminMessageTH          string = "ไม่สามารถยืนยันการจ่ายเงินคืนได้."
 	SuccessRejectRepaymentAdminMessageTH       string = "ปฏิเสธการจ่ายเงินคืนสำเร็จ."
 	ErrRejectRepaymentAdminMessageTH           string = "ไม่สามารถปฏิเสธการจ่ายเงินคืนได้."
+	SuccessLiquidateFundAdminMessageTH         string = "ขายทรัพย์สินทั้งหมดของทุนสำเร็จ."
+	ErrLiquidateFundAdminMessageTH             string = "ไม่สามารถขายทรัพย์สินทั้งหมดของทุนได้."
 	// Mail
 	SuccessOTPRequestMessageTH      string = "ขอรหัส OTP สำเร็จ."
 	ErrOTPRequestMessageTH          string = "ไม่สามารถขอรหัส OTP ได้."

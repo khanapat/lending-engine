@@ -319,6 +319,15 @@ definitions:
         example: 0.05
         type: number
     type: object
+  lending.LiquidateFundRequest:
+    properties:
+      accountId:
+        example: 1
+        type: integer
+      contractId:
+        example: 1
+        type: integer
+    type: object
   lending.RejectDepositAdminRequest:
     properties:
       id:
@@ -969,6 +978,36 @@ paths:
           schema:
             $ref: '#/definitions/response.ErrResponse'
       summary: Update Interest Term Admin
+      tags:
+      - Admin
+  /admin/liquidation:
+    post:
+      consumes:
+      - application/json
+      description: liquidate all fund by account id and contract id
+      parameters:
+      - description: request body to liquidate fund
+        in: body
+        name: LiquidateFundAdmin
+        required: true
+        schema:
+          $ref: '#/definitions/lending.LiquidateFundRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Liquidate Fund Admin
       tags:
       - Admin
   /admin/repay:
