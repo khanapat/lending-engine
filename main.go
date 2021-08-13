@@ -102,6 +102,8 @@ func main() {
 		redis.NewDeleteDataRedisFn(pool),
 	)
 
+	app.Use(middle.CorsMiddleware())
+
 	swag := app.Group("/swagger")
 	swag.Use(middle.BasicAuthenicationMiddleware())
 	registerSwaggerRoute(swag)

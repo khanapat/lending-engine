@@ -993,3 +993,7 @@ func (s *lendingHandler) RejectRepayAdmin(c *handler.Ctx) error {
 	c.Log().Info(fmt.Sprintf("RepayID: %d - Status: %s", req.ID, common.ConfirmStatus))
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).RejectRepaymentAdminSuccess, nil))
 }
+
+// func (s *lendingHandler) LiquidateFundAdmin(c *handler.Ctx) error {
+
+// }

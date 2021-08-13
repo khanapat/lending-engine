@@ -310,3 +310,8 @@ type SummaryLoan struct {
 	Period          int     `json:"period" example:"12"`
 	TotalInterest   float64 `json:"totalInterest" example:"5000"`
 }
+
+// liquidate
+type LiquidateFundRequest struct {
+	AccountID int `json:"accountId" example:"1"`
+}

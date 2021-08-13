@@ -10,6 +10,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/spf13/viper"
@@ -65,6 +66,14 @@ func (m *middleware) AuthorizeTokenMiddleware() fiber.Handler {
 			return c.Status(fiber.StatusUnauthorized).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).AuthorizationToken, "Access Token is unauthorized."))
 		},
 		ContextKey: common.JWTClaimsKey,
+	})
+}
+
+func (m *middleware) CorsMiddleware() fiber.Handler {
+	return cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowMethods: "GET,POST,PUT,PATCH",
+		AllowHeaders: "Content-Type, Origin, Authorization, Accept, OTP, ReferenceNo",
 	})
 }
 
