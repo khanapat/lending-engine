@@ -82,6 +82,7 @@ var (
 		RejectRepaymentAdminRequest:       ErrResponse{Code: ErrInvalidRequestCode, Title: ErrRejectRepaymentAdminMessageEN, Description: ErrRequestDataDescEN},
 		LiquidateFundAdminSuccess:         Response{Code: SuccessCode, Title: SuccessLiquidateFundAdminMessageEN},
 		LiquidateFundAdminRequest:         ErrResponse{Code: ErrInvalidRequestCode, Title: ErrLiquidateFundAdminMessageEN, Description: ErrRequestDataDescEN},
+		LiquidateFundAdminThirdParty:      ErrResponse{Code: ErrThirdPartyCode, Title: ErrLiquidateFundAdminMessageEN, Description: ErrThirdPartyDescEN},
 		GetOTPSuccess:                     Response{Code: SuccessCode, Title: SuccessOTPRequestMessageEN},
 		GetOTPRequest:                     ErrResponse{Code: ErrInvalidRequestCode, Title: ErrOTPRequestMessageEN, Description: ErrRequestDataDescEN},
 		GetOTPThirdParty:                  ErrResponse{Code: ErrThirdPartyCode, Title: ErrOTPRequestMessageEN, Description: ErrThirdPartyDescEN},
@@ -169,6 +170,7 @@ var (
 		RejectRepaymentAdminRequest:       ErrResponse{Code: ErrInvalidRequestCode, Title: ErrRejectRepaymentAdminMessageTH, Description: ErrRequestDataDescTH},
 		LiquidateFundAdminSuccess:         Response{Code: SuccessCode, Title: SuccessLiquidateFundAdminMessageTH},
 		LiquidateFundAdminRequest:         ErrResponse{Code: ErrInvalidRequestCode, Title: ErrLiquidateFundAdminMessageTH, Description: ErrRequestDataDescTH},
+		LiquidateFundAdminThirdParty:      ErrResponse{Code: ErrThirdPartyCode, Title: ErrLiquidateFundAdminMessageTH, Description: ErrThirdPartyDescTH},
 		GetOTPSuccess:                     Response{Code: SuccessCode, Title: SuccessOTPRequestMessageTH},
 		GetOTPRequest:                     ErrResponse{Code: ErrInvalidRequestCode, Title: ErrOTPRequestMessageTH, Description: ErrRequestDataDescTH},
 		GetOTPThirdParty:                  ErrResponse{Code: ErrThirdPartyCode, Title: ErrOTPRequestMessageTH, Description: ErrThirdPartyDescTH},
@@ -269,6 +271,7 @@ type Global struct {
 	RejectRepaymentAdminRequest       ErrResponse
 	LiquidateFundAdminSuccess         Response
 	LiquidateFundAdminRequest         ErrResponse
+	LiquidateFundAdminThirdParty      ErrResponse
 	// Mail
 	GetOTPSuccess       Response
 	GetOTPRequest       ErrResponse

@@ -54,6 +54,18 @@ type RepayTransaction struct {
 	UpdatedDatetime *time.Time `db:"updated_datetime" json:"updatedDatetime" example:"2021-02-03 12:13:14"`
 }
 
+type Liquidation struct {
+	AccountID       *int     `db:"account_id" json:"accountId" example:"1"`
+	FirstName       *string  `db:"first_name" json:"firstName" example:"somsak"`
+	LastName        *string  `db:"last_name" json:"jean"`
+	Email           *string  `db:"email" json:"icfin999@gmail.com"`
+	BTCVolume       *float64 `db:"btc_volume" json:"btcVolume" example:"0.1"`
+	ETHVolume       *float64 `db:"eth_volume" json:"ethVolume" example:"0.1"`
+	MarginCallDate  *string  `db:"margin_call_date" json:"marginCallDate" example:"2021-01-02"`
+	LoanOutstanding *float64 `db:"loan_outstanding" json:"loanOutstanding" example:"20000"`
+	Status          *string  `db:"status" json:"status" example:"CLOSED"`
+}
+
 type LendingRepository interface {
 	QueryWalletTransactionByIDRepo(context.Context, int) (*WalletTransaction, error)
 	QueryWalletTransactionRepo(context.Context, map[string]interface{}) (*[]WalletTransaction, error)
@@ -74,4 +86,5 @@ type LendingRepository interface {
 	QueryRepayTransactionRepo(context.Context, map[string]interface{}) (*[]RepayTransaction, error)
 	InsertRepayTransactionRepo(context.Context, int, int, float64, string) (int64, error)
 	UpdateRepayTransactionRepo(context.Context, int, string, string) (int64, error)
+	LiquidationRepo(context.Context, int, int) (*Liquidation, error)
 }

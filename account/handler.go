@@ -88,7 +88,7 @@ func (s *accountHandler) SignUp(c *handler.Ctx) error {
 			req.Email,
 		},
 		Subject:  "Verify your email address to finish signing up for ICFin.finance",
-		Template: viper.GetString("client.email-api.verify-emil-template"),
+		Template: viper.GetString("client.email-api.verification.template"),
 		Body: BodySendVerifyEmailClient{
 			Name: fmt.Sprintf("%s %s", req.FirstName, req.LastName),
 			Link: strings.Replace(viper.GetString("client.email-api.verification.link"), "{ref}", ref, 1),
@@ -464,7 +464,7 @@ func (s *accountHandler) RequestResetPassword(c *handler.Ctx) error {
 			*account.Email,
 		},
 		Subject:  "You have requested OTP",
-		Template: viper.GetString("client.email-api.otp-template"),
+		Template: viper.GetString("client.email-api.otp.template"),
 		Body: mail.BodySendMailOtpClient{
 			Name:  fmt.Sprintf("%s %s", *account.FirstName, *account.LastName),
 			RefNo: refNo,

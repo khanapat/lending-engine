@@ -428,3 +428,31 @@ func (r lendingRepositoryDB) UpdateRepayTransactionRepo(ctx context.Context, rep
 	}
 	return rows, nil
 }
+
+func (r lendingRepositoryDB) LiquidationRepo(ctx context.Context, accountId int, contractId int) (*Liquidation, error) {
+	var liquidation Liquidation
+	err := r.db.GetContext(ctx, &liquidation, `
+		SELECT	x.account_id,
+				x.first_name,
+				x.last_name,
+				x.email,
+				y.btc_volume,
+				y.eth_volume,
+				y.margin_call_date,
+				z.loan_outstanding,
+				z.status 
+		FROM lending.public.account x
+		INNER JOIN lending.public.wallet y ON x.account_id = y.account_id 
+		INNER JOIN lending.public.contract z ON x.account_id = z.account_id 
+		WHERE x.account_id = $1
+		AND	z.contract_id = $2
+	;`, accountId, contractId)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, nil
+	case err != nil:
+		return nil, err
+	default:
+		return &liquidation, nil
+	}
+}

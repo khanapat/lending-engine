@@ -326,3 +326,25 @@ func (req *LiquidateFundRequest) validate() error {
 	}
 	return nil
 }
+
+type SendLiquidationClientRequest struct {
+	From     string                    `json:"from" example:"k.apiwattanawong@gmail.com"`
+	To       []string                  `json:"to" example:"[yoisak4@gmail.com]"`
+	Subject  string                    `json:"subject" example:"otp request"`
+	Template string                    `json:"template" example:"otp.html"`
+	Body     BodySendLiquidationClient `json:"body"`
+	Auth     bool                      `json:"auth" example:"true"`
+}
+
+type BodySendLiquidationClient struct {
+	Name       string  `json:"name" example:"trust momo"`
+	BTCAmount  float64 `json:"btcAmount" example:"0.5"`
+	ETHAmount  float64 `json:"ethAmount" example:"0.5"`
+	ContractID int     `json:"contractId" example:"1"`
+}
+
+type SendLiquidationClientResult struct {
+	Code        uint64 `json:"code" example:"2000"`
+	Title       string `json:"title" example:"Success."`
+	Description string `json:"description" example:"Please contact administrator for more information."`
+}

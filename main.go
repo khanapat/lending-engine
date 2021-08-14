@@ -130,6 +130,7 @@ func main() {
 		lending.NewLendingRepositoryDB(postgresDB),
 		blockchain.NewQueryTransactionClientFn(ethClient, bscClient),
 		redis.NewGetFloatDataRedisFn(pool),
+		lending.NewRequestLiquidationClientFn(httpClient),
 	)
 
 	mailhandler := mail.NewMailHandler(
@@ -266,12 +267,14 @@ func initViper() {
 
 	viper.SetDefault("client.timeout", "60s")
 	viper.SetDefault("client.hidebody", true)
+	viper.SetDefault("client.email-api.account", "icfin999@gmail.com")
 	viper.SetDefault("client.email-api.verification.url", "http://localhost:8080/email/verification")
 	viper.SetDefault("client.email-api.verification.link", "http://www.icfin.finance.com/verify-email/{ref}")
+	viper.SetDefault("client.email-api.verification.template", "verify-email.html")
 	viper.SetDefault("client.email-api.otp.url", "http://localhost:8080/email/otp")
-	viper.SetDefault("client.email-api.account", "yoisak09446@gmail.com")
-	viper.SetDefault("client.email-api.verify-emil-template", "verify-email.html")
-	viper.SetDefault("client.email-api.otp-template", "otp.html")
+	viper.SetDefault("client.email-api.otp.template", "otp.html")
+	viper.SetDefault("client.email-api.liquidation.url", "http://localhost:8080/email/liquidation")
+	viper.SetDefault("client.email-api.liquidation.template", "liquidation.html")
 
 	viper.SetDefault("jwt.issuer", "admin")
 	viper.SetDefault("jwt.expired-at", "60m")
