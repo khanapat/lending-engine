@@ -1057,8 +1057,10 @@ func (s *lendingHandler) LiquidateFundAdmin(c *handler.Ctx) error {
 	c.Log().Info(fmt.Sprintf("ContractID: %d - Status: %s", req.ContractID, common.ClosedStatus))
 
 	sendLiquidationClientRequest := SendLiquidationClientRequest{
-		From:     viper.GetString("client.email-api.account"),
-		To:       []string{},
+		From: viper.GetString("client.email-api.account"),
+		To: []string{
+			*liq.Email,
+		},
 		Subject:  "Asset Liquidation Notice",
 		Template: viper.GetString("client.email-api.liquidation.template"),
 		Body: BodySendLiquidationClient{
