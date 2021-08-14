@@ -2,6 +2,7 @@ package account
 
 import (
 	"fmt"
+	"lending-engine/common"
 	"lending-engine/response"
 	"unicode/utf8"
 
@@ -34,6 +35,9 @@ func (req *SignUpRequest) validate() error {
 	}
 	if utf8.RuneCountInString(req.Email) == 0 {
 		return errors.Wrapf(errors.New(fmt.Sprintf("'email' must be REQUIRED field but the input is '%v'.", req.Email)), response.ValidateFieldError)
+	}
+	if !common.EmailRegexp.MatchString(req.Email) {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'email' must be in format standard email but the input is '%v'.", req.Email)), response.ValidateFieldError)
 	}
 	if utf8.RuneCountInString(req.Password) == 0 {
 		return errors.Wrapf(errors.New(fmt.Sprintf("'password' must be REQUIRED field but the input is '%v'.", req.Password)), response.ValidateFieldError)

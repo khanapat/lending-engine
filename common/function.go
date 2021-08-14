@@ -1,6 +1,11 @@
 package common
 
-import "time"
+import (
+	"regexp"
+	"time"
+)
+
+var EmailRegexp = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
 func RandStringBytes(length int) string {
 	b := make([]byte, length)
