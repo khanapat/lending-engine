@@ -1,6 +1,9 @@
 package account
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
 type Account struct {
 	AccountID     *int    `db:"account_id"`
@@ -50,6 +53,14 @@ type AccountDetail struct {
 	Tag                  *string `db:"tag"`
 }
 
+type UserSubscription struct {
+	FirstName       *string    `db:"first_name"`
+	LastName        *string    `db:"last_name"`
+	Phone           *string    `db:"phone"`
+	Email           *string    `db:"email"`
+	CreatedDatetime *time.Time `db:"created_datetime"`
+}
+
 type AccountRepository interface {
 	SignUpAccountRepo(context.Context, string, string, string, string, string, string, string, string, string, string) (int64, error)
 	GetAccountByEmailRepo(context.Context, string) (*Account, error)
@@ -65,4 +76,5 @@ type AccountRepository interface {
 	QueryDocumentInfoAdminRepo(context.Context) (*[]DocumentInfo, error)
 	InsertDocumentInfoAdminRepo(context.Context, string) (int64, error)
 	UpdateDocumentInfoAdminRepo(context.Context, int, string) (int64, error)
+	CreateUserSubscriptionRepo(context.Context, string, string, string, string) error
 }

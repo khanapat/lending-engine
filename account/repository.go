@@ -329,3 +329,26 @@ func (r accountRepositoryDB) UpdateDocumentInfoAdminRepo(ctx context.Context, do
 	}
 	return rows, nil
 }
+
+func (r accountRepositoryDB) CreateUserSubscriptionRepo(ctx context.Context, first string, last string, phone string, email string) error {
+	_, err := r.db.ExecContext(ctx, `
+		INSERT INTO lending.public.user_subscription
+		(
+			first_name,
+			last_name,
+			phone,
+			email
+		)
+		VALUES
+		(
+			$1,
+			$2,
+			$3,
+			$4
+		)
+	;`, first, last, phone, email)
+	if err != nil {
+		return err
+	}
+	return nil
+}

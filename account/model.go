@@ -259,3 +259,30 @@ func (req *UpdateDocumentInfoAdminRequest) validate() error {
 	}
 	return nil
 }
+
+// add user subscription
+type AddUserSubscriptionRequest struct {
+	FirstName string `json:"firstName" example:"Frank"`
+	LastName  string `json:"lastName" example:"Style"`
+	Phone     string `json:"phone" example:"0812345678"`
+	Email     string `json:"email" example:"k.apiwattanawong@gmail.com"`
+}
+
+func (req *AddUserSubscriptionRequest) validate() error {
+	if utf8.RuneCountInString(req.FirstName) == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'firstName' must be REQUIRED field but the input is '%v'.", req.FirstName)), response.ValidateFieldError)
+	}
+	if utf8.RuneCountInString(req.LastName) == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'lastName' must be REQUIRED field but the input is '%v'.", req.LastName)), response.ValidateFieldError)
+	}
+	if utf8.RuneCountInString(req.Phone) == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'phone' must be REQUIRED field but the input is '%v'.", req.Phone)), response.ValidateFieldError)
+	}
+	if utf8.RuneCountInString(req.Email) == 0 {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'email' must be REQUIRED field but the input is '%v'.", req.Email)), response.ValidateFieldError)
+	}
+	if !common.EmailRegexp.MatchString(req.Email) {
+		return errors.Wrapf(errors.New(fmt.Sprintf("'email' must be in format standard email but the input is '%v'.", req.Email)), response.ValidateFieldError)
+	}
+	return nil
+}

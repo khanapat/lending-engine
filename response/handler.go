@@ -25,6 +25,8 @@ var (
 		RequestResetPasswordThirdParty:    ErrResponse{Code: ErrThirdPartyCode, Title: ErrRequestResetPasswordMessageEN, Description: ErrThirdPartyDescEN},
 		ResetPasswordSuccess:              Response{Code: SuccessCode, Title: SuccessResetPasswordMessageEN},
 		ResetPasswordRequest:              ErrResponse{Code: ErrInvalidRequestCode, Title: ErrResetPasswordMessageEN, Description: ErrRequestDataDescEN},
+		AddUserSubscriptionSuccess:        Response{Code: SuccessCode, Title: SuccessAddUserSubscriptionMessageEN},
+		AddUserSubscriptionRequest:        ErrResponse{Code: ErrInvalidRequestCode, Title: ErrAddUserSubscriptionMessageEN, Description: ErrRequestDataDescEN},
 		GetDocumentInfoAdminSuccess:       Response{Code: SuccessCode, Title: SuccessGetDocumentInfoAdminMessageEN},
 		CreateDocumentInfoAdminSuccess:    Response{Code: SuccessCode, Title: SuccessCreateDocumentInfoAdminMessageEN},
 		CreateDocumentInfoAdminRequest:    ErrResponse{Code: ErrInvalidRequestCode, Title: ErrCreateDocumentInfoAdminMessageEN, Description: ErrRequestDataDescEN},
@@ -113,6 +115,8 @@ var (
 		RequestResetPasswordThirdParty:    ErrResponse{Code: ErrThirdPartyCode, Title: ErrRequestResetPasswordMessageTH, Description: ErrThirdPartyDescTH},
 		ResetPasswordSuccess:              Response{Code: SuccessCode, Title: SuccessResetPasswordMessageTH},
 		ResetPasswordRequest:              ErrResponse{Code: ErrInvalidRequestCode, Title: ErrResetPasswordMessageTH, Description: ErrRequestDataDescTH},
+		AddUserSubscriptionSuccess:        Response{Code: SuccessCode, Title: SuccessAddUserSubscriptionMessageTH},
+		AddUserSubscriptionRequest:        ErrResponse{Code: ErrInvalidRequestCode, Title: ErrAddUserSubscriptionMessageTH, Description: ErrRequestDataDescTH},
 		GetDocumentInfoAdminSuccess:       Response{Code: SuccessCode, Title: SuccessGetDocumentInfoAdminMessageTH},
 		CreateDocumentInfoAdminSuccess:    Response{Code: SuccessCode, Title: SuccessCreateDocumentInfoAdminMessageTH},
 		CreateDocumentInfoAdminRequest:    ErrResponse{Code: ErrInvalidRequestCode, Title: ErrCreateDocumentInfoAdminMessageTH, Description: ErrRequestDataDescTH},
@@ -210,6 +214,8 @@ type Global struct {
 	RequestResetPasswordThirdParty ErrResponse
 	ResetPasswordSuccess           Response
 	ResetPasswordRequest           ErrResponse
+	AddUserSubscriptionSuccess     Response
+	AddUserSubscriptionRequest     ErrResponse
 	//// Admin
 	GetDocumentInfoAdminSuccess    Response
 	CreateDocumentInfoAdminSuccess Response

@@ -32,6 +32,8 @@ const (
 	ErrRequestResetPasswordMessageEN     string = "Cannot request reset password."
 	SuccessResetPasswordMessageEN        string = "Success reset password."
 	ErrResetPasswordMessageEN            string = "Cannot reset password."
+	SuccessAddUserSubscriptionMessageEN  string = "Success add user subscription."
+	ErrAddUserSubscriptionMessageEN      string = "Cannot add user subscription."
 	//// Admin
 	SuccessGetDocumentInfoAdminMessageEN    string = "Success get document info."
 	ErrGetDocumentInfoAdminMessageEN        string = "Cannot get document info."
@@ -133,6 +135,8 @@ const (
 	ErrRequestResetPasswordMessageTH     string = "ไม่สามารถส่งคำขอร้องเพื่อตั้งรหัสบัญชีใหม่ได้."
 	SuccessResetPasswordMessageTH        string = "ตั้งรหัสบัญชีใหม่สำเร็จ."
 	ErrResetPasswordMessageTH            string = "ไม่สามารถตั้งรหัสบัญชีใหม่ได้."
+	SuccessAddUserSubscriptionMessageTH  string = "เพ่ิมผู้ติดตามสำเร็จ."
+	ErrAddUserSubscriptionMessageTH      string = "ไม่สามารถเพิ่มผู้ติดตามได้."
 	//// Admin
 	SuccessGetDocumentInfoAdminMessageTH    string = "แสดงข้อมูลเอกสารสำเร็จ."
 	ErrGetDocumentInfoAdminMessageTH        string = "ไม่สามารถแสดงข้อมูลเอกสารได้."

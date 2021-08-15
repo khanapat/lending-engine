@@ -1799,6 +1799,52 @@ var doc = `{
                 }
             }
         },
+        "/subscription": {
+            "post": {
+                "description": "add user subscription to receive info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Add User Subscription",
+                "parameters": [
+                    {
+                        "description": "request body to create user subscription",
+                        "name": "AddUserSubscription",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.AddUserSubscriptionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/terms": {
             "get": {
                 "security": [
@@ -2084,6 +2130,27 @@ var doc = `{
                 "version": {
                     "type": "string",
                     "example": "1.0.0"
+                }
+            }
+        },
+        "account.AddUserSubscriptionRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "k.apiwattanawong@gmail.com"
+                },
+                "firstName": {
+                    "type": "string",
+                    "example": "Frank"
+                },
+                "lastName": {
+                    "type": "string",
+                    "example": "Style"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "0812345678"
                 }
             }
         },

@@ -145,6 +145,7 @@ func main() {
 	baseApi.Get("/price", handler.Helper(lendingHandler.GetTokenPrice, logger))
 	baseApi.Post("/price/calculation", handler.Helper(lendingHandler.PreCalculationLoan, logger))
 
+	baseApi.Post("/subscription", handler.Helper(accountHandler.AddUserSubscription, logger))
 	baseApi.Post("/signup", handler.Helper(accountHandler.SignUp, logger))
 	baseApi.Post("/login", handler.Helper(accountHandler.Login, logger))
 	baseApi.Get("/verify/email/:ref", handler.Helper(accountHandler.ConfirmVerifyEmail, logger))

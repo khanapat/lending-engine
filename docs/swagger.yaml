@@ -6,6 +6,21 @@ definitions:
         example: 1.0.0
         type: string
     type: object
+  account.AddUserSubscriptionRequest:
+    properties:
+      email:
+        example: k.apiwattanawong@gmail.com
+        type: string
+      firstName:
+        example: Frank
+        type: string
+      lastName:
+        example: Style
+        type: string
+      phone:
+        example: "0812345678"
+        type: string
+    type: object
   account.ConfirmAccountAdminRequest:
     properties:
       accountId:
@@ -1632,6 +1647,36 @@ paths:
           schema:
             $ref: '#/definitions/response.ErrResponse'
       summary: Sign up
+      tags:
+      - Account
+  /subscription:
+    post:
+      consumes:
+      - application/json
+      description: add user subscription to receive info
+      parameters:
+      - description: request body to create user subscription
+        in: body
+        name: AddUserSubscription
+        required: true
+        schema:
+          $ref: '#/definitions/account.AddUserSubscriptionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrResponse'
+      summary: Add User Subscription
       tags:
       - Account
   /terms:

@@ -638,7 +638,36 @@ func (s *accountHandler) UpdateDocumentInfoAdmin(c *handler.Ctx) error {
 
 	rows, err := s.AccountRepository.UpdateDocumentInfoAdminRepo(c.Context(), req.DocumentID, req.DocumentType)
 	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	if rows != 1 {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalOperation, fmt.Sprintf("expected to affect 1 row, affected %d", rows)))
 	}
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).UpdateDocumentInfoAdminSuccess, nil))
+}
+
+// AddUserSubscription
+// @Summary Add User Subscription
+// @Description add user subscription to receive info
+// @Tags Account
+// @Accept json
+// @Produce json
+// @Param AddUserSubscription body account.AddUserSubscriptionRequest true "request body to create user subscription"
+// @Success 200 {object} response.Response "Success"
+// @Failure 400 {object} response.ErrResponse "Bad Request"
+// @Failure 500 {object} response.ErrResponse "Internal Server Error"
+// @Router /subscription [post]
+func (s *accountHandler) AddUserSubscription(c *handler.Ctx) error {
+	var req AddUserSubscriptionRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).AddUserSubscriptionRequest, err.Error()))
+	}
+	if err := req.validate(); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).AddUserSubscriptionRequest, err.Error()))
+	}
+
+	if err := s.AccountRepository.CreateUserSubscriptionRepo(c.Context(), req.FirstName, req.LastName, req.Phone, req.Email); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
+	}
+	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).AddUserSubscriptionSuccess, nil))
 }
