@@ -11,6 +11,7 @@ var (
 		AuthorizationToken:                ErrResponse{Code: ErrUnauthorizationCode, Title: ErrAuthorizationTokenMessageEN, Description: ErrAuthorizationDescEN},
 		SignUpAccountSuccess:              Response{Code: SuccessCode, Title: SuccessSignUpMessageEN},
 		SignUpAccountRequest:              ErrResponse{Code: ErrInvalidRequestCode, Title: ErrSignUpMessageEN, Description: ErrRequestDataDescEN},
+		SignUpAccountDuplicate:            ErrResponse{Code: ErrDuplicateKeyCode, Title: ErrSignUpMessageEN, Description: ErrRequestDataDescEN},
 		SignUpAccountThirdParty:           ErrResponse{Code: ErrThirdPartyCode, Title: ErrSignUpMessageEN, Description: ErrThirdPartyDescEN},
 		ConfirmVerifyEmailSuccess:         Response{Code: SuccessCode, Title: SuccessConfirmVerifyEmailMessageEN},
 		ConfirmVerifyEmailRequest:         ErrResponse{Code: ErrInvalidRequestCode, Title: ErrConfirmVerifyEmailMessageEN, Description: ErrRequestDataDescEN},
@@ -27,6 +28,7 @@ var (
 		ResetPasswordRequest:              ErrResponse{Code: ErrInvalidRequestCode, Title: ErrResetPasswordMessageEN, Description: ErrRequestDataDescEN},
 		AddUserSubscriptionSuccess:        Response{Code: SuccessCode, Title: SuccessAddUserSubscriptionMessageEN},
 		AddUserSubscriptionRequest:        ErrResponse{Code: ErrInvalidRequestCode, Title: ErrAddUserSubscriptionMessageEN, Description: ErrRequestDataDescEN},
+		AddUserSubscriptionDuplicate:      ErrResponse{Code: ErrDuplicateKeyCode, Title: ErrAddUserSubscriptionMessageEN, Description: ErrRequestDataDescEN},
 		GetDocumentInfoAdminSuccess:       Response{Code: SuccessCode, Title: SuccessGetDocumentInfoAdminMessageEN},
 		CreateDocumentInfoAdminSuccess:    Response{Code: SuccessCode, Title: SuccessCreateDocumentInfoAdminMessageEN},
 		CreateDocumentInfoAdminRequest:    ErrResponse{Code: ErrInvalidRequestCode, Title: ErrCreateDocumentInfoAdminMessageEN, Description: ErrRequestDataDescEN},
@@ -101,6 +103,7 @@ var (
 		AuthorizationToken:                ErrResponse{Code: ErrUnauthorizationCode, Title: ErrAuthorizationTokenMessageTH, Description: ErrAuthorizationDescTH},
 		SignUpAccountSuccess:              Response{Code: SuccessCode, Title: SuccessSignUpMessageTH},
 		SignUpAccountRequest:              ErrResponse{Code: ErrInvalidRequestCode, Title: ErrSignUpMessageTH, Description: ErrRequestDataDescTH},
+		SignUpAccountDuplicate:            ErrResponse{Code: ErrDuplicateKeyCode, Title: ErrSignUpMessageTH, Description: ErrRequestDataDescTH},
 		SignUpAccountThirdParty:           ErrResponse{Code: ErrThirdPartyCode, Title: ErrSignUpMessageTH, Description: ErrThirdPartyDescTH},
 		ConfirmVerifyEmailSuccess:         Response{Code: SuccessCode, Title: SuccessConfirmVerifyEmailMessageTH},
 		ConfirmVerifyEmailRequest:         ErrResponse{Code: ErrInvalidRequestCode, Title: ErrConfirmVerifyEmailMessageTH, Description: ErrRequestDataDescTH},
@@ -117,6 +120,7 @@ var (
 		ResetPasswordRequest:              ErrResponse{Code: ErrInvalidRequestCode, Title: ErrResetPasswordMessageTH, Description: ErrRequestDataDescTH},
 		AddUserSubscriptionSuccess:        Response{Code: SuccessCode, Title: SuccessAddUserSubscriptionMessageTH},
 		AddUserSubscriptionRequest:        ErrResponse{Code: ErrInvalidRequestCode, Title: ErrAddUserSubscriptionMessageTH, Description: ErrRequestDataDescTH},
+		AddUserSubscriptionDuplicate:      ErrResponse{Code: ErrDuplicateKeyCode, Title: ErrAddUserSubscriptionMessageTH, Description: ErrRequestDataDescTH},
 		GetDocumentInfoAdminSuccess:       Response{Code: SuccessCode, Title: SuccessGetDocumentInfoAdminMessageTH},
 		CreateDocumentInfoAdminSuccess:    Response{Code: SuccessCode, Title: SuccessCreateDocumentInfoAdminMessageTH},
 		CreateDocumentInfoAdminRequest:    ErrResponse{Code: ErrInvalidRequestCode, Title: ErrCreateDocumentInfoAdminMessageTH, Description: ErrRequestDataDescTH},
@@ -200,6 +204,7 @@ type Global struct {
 	//// User
 	SignUpAccountSuccess           Response
 	SignUpAccountRequest           ErrResponse
+	SignUpAccountDuplicate         ErrResponse
 	SignUpAccountThirdParty        ErrResponse
 	ConfirmVerifyEmailSuccess      Response
 	ConfirmVerifyEmailRequest      ErrResponse
@@ -216,6 +221,7 @@ type Global struct {
 	ResetPasswordRequest           ErrResponse
 	AddUserSubscriptionSuccess     Response
 	AddUserSubscriptionRequest     ErrResponse
+	AddUserSubscriptionDuplicate   ErrResponse
 	//// Admin
 	GetDocumentInfoAdminSuccess    Response
 	CreateDocumentInfoAdminSuccess Response

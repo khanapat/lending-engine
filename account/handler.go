@@ -71,7 +71,7 @@ func (s *accountHandler) SignUp(c *handler.Ctx) error {
 	id, err := s.AccountRepository.SignUpAccountRepo(c.Context(), req.FirstName, req.LastName, req.Phone, req.Email, string(password), req.AccountNumber, req.CitizenName, req.CitizenCard, req.BookBankName, req.BookBankLedger)
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
-			return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).SignUpAccountRequest, "Duplicate email."))
+			return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).SignUpAccountDuplicate, "Duplicate email."))
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
@@ -667,6 +667,9 @@ func (s *accountHandler) AddUserSubscription(c *handler.Ctx) error {
 	}
 
 	if err := s.AccountRepository.CreateUserSubscriptionRepo(c.Context(), req.FirstName, req.LastName, req.Phone, req.Email); err != nil {
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			return c.Status(fiber.StatusBadRequest).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).AddUserSubscriptionDuplicate, "Duplicate email."))
+		}
 		return c.Status(fiber.StatusInternalServerError).JSON(response.NewErrResponse(response.ResponseContextLocale(c.Context()).InternalDatabase, err.Error()))
 	}
 	return c.Status(fiber.StatusOK).JSON(response.NewResponse(response.ResponseContextLocale(c.Context()).AddUserSubscriptionSuccess, nil))

@@ -4,6 +4,7 @@ const (
 	SuccessCode                uint64 = 200
 	ErrInvalidRequestCode      uint64 = 1000
 	ErrRequestExpireCode       uint64 = 1001
+	ErrDuplicateKeyCode        uint64 = 1002
 	ErrUnauthorizationCode     uint64 = 4001
 	ErrOTPRequestCode          uint64 = 4002
 	ErrBasicAuthenticationCode uint64 = 4007
