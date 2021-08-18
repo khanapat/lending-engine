@@ -41,7 +41,7 @@ This project use these components to run service.
 * [Redis](https://redis.io/)
 * [Postgres](https://www.postgresql.org/)
 * [Mail-API](https://github.com/khanapat/mail-api)
-* [Bitkub-Websocket]()
+* [Bitkub-Websocket](https://github.com/khanapat/bitkub-websocket)
 
 <!-- GETTING STARTED -->
 
